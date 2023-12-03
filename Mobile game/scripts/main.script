@@ -1,0 +1,56 @@
+local audio_manager = require("scripts.modules.audio_manager")
+
+function init(self)
+	msg.post(".", "acquire_input_focus")
+	msg.post("@render:", "use_fixed_fit_projection", { near = -1, far = 1 })
+
+	if not fmod then
+		print("Sorry! Your platform is not yet supported.")
+		return
+	end
+
+	local sys_config = {}
+	local system_name = sys_config.system_name
+	local sys_info = sys.get_sys_info()
+	sys_config.system_name = sys_info.system_name
+	sys_config.path_sep = system_name == "Windows" and "\\" or "/"
+	sys_config.bundle_root_path = sys.get_application_path()
+
+	local isBundled = sys.get_config_string("project.bundled", "false") == "true"
+    local bank_path
+	if
+    isBundled and system_name ~= "HTML5"
+    then
+      if system_name == "Android" then
+        bank_path = "file:///android_asset/banks/"
+      else
+        local sep = sys_config.path_sep
+        bank_path = sys_config.bundle_root_path
+        if bank_path:sub(#bank_path) ~= sep then -- If the path doesn't end with a "/", add it (happens on Switch)
+          bank_path = bank_path .. sep
+        end
+        bank_path = bank_path .. "banks" .. sep
+      end
+  	  fmod.studio.system:load_bank_file(bank_path .. "/Master.bank", fmod.STUDIO_LOAD_BANK_NORMAL)
+  	  fmod.studio.system:load_bank_file(bank_path .. "/Master.strings.bank", fmod.STUDIO_LOAD_BANK_NORMAL)
+  	  fmod.studio.system:load_bank_file(bank_path .. "/Music.bank", fmod.STUDIO_LOAD_BANK_NORMAL)
+  	  fmod.studio.system:load_bank_file(bank_path .. "/SFX.bank", fmod.STUDIO_LOAD_BANK_NORMAL)
+    else
+      bank_path = "/assets/banks/"
+      fmod.studio.system:load_bank_memory(resource.load(bank_path .. "Master.bank"), fmod.STUDIO_LOAD_BANK_NORMAL)
+      fmod.studio.system:load_bank_memory(resource.load(bank_path .. "Master.strings.bank"), fmod.STUDIO_LOAD_BANK_NORMAL)
+      fmod.studio.system:load_bank_memory(resource.load(bank_path .. "Music.bank"), fmod.STUDIO_LOAD_BANK_NORMAL)
+      fmod.studio.system:load_bank_memory(resource.load(bank_path .. "SFX.bank"), fmod.STUDIO_LOAD_BANK_NORMAL)
+    end
+
+	-- Store music event in self for later control
+	audio_manager.play_music("event:/Music/Level 01")
+end
+
+function on_input(self, action_id, action)
+	if action_id == hash("touch") and action.pressed then
+		print("Touch!")
+		--audio_manager.play_sound_effect("event:/Weapons/Explosion")
+		audio_manager.play_music("event:/Music/Level 02")
+	end
+end
