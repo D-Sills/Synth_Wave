@@ -2,7 +2,7 @@ local audio_manager = require("scripts.modules.audio_manager")
 
 function init(self)
 	msg.post(".", "acquire_input_focus")
-	msg.post("@render:", "use_fixed_fit_projection", { near = -1, far = 1 })
+	msg.post("camera", "enable")
 
 	if not fmod then
 		print("Sorry! Your platform is not yet supported.")
@@ -43,14 +43,24 @@ function init(self)
       fmod.studio.system:load_bank_memory(resource.load(bank_path .. "SFX.bank"), fmod.STUDIO_LOAD_BANK_NORMAL)
     end
 
-	-- Store music event in self for later control
-	audio_manager.play_music("event:/Music/Level 01")
+    msg.post("/main#scene_fader", "fade_in", {duration = 1, callback = true})
+end
+
+function callbacks()
+  audio_manager.play_music("event:/Music/Level 01")
 end
 
 function on_input(self, action_id, action)
 	if action_id == hash("touch") and action.pressed then
 		print("Touch!")
-		--audio_manager.play_sound_effect("event:/Weapons/Explosion")
-		audio_manager.play_music("event:/Music/Level 02")
+		audio_manager.play_sound_effect("event:/Weapons/Explosion")
+    --audio_manager.play_music("event:/Music/Level 02")
+    msg.post("camera", "shake", { intensity = 0.05, duration = 0.5, direction = "both" })
+	end
+end
+
+function on_message(self, message_id, message, sender)
+	if message_id == hash("fade_done") then
+		callbacks()
 	end
 end

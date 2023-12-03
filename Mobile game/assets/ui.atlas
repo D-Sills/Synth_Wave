@@ -1,9 +1,9 @@
 images {
-  image: "/assets/ui/app_icons/icon_180.png"
+  image: "/assets/ui/fmod-logo.png"
   sprite_trim_mode: SPRITE_TRIM_MODE_OFF
 }
 images {
-  image: "/assets/background.png"
+  image: "/assets/ui/defold-logo.png"
   sprite_trim_mode: SPRITE_TRIM_MODE_OFF
 }
 margin: 0

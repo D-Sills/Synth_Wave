@@ -1,0 +1,54 @@
+local utils = require("scripts.modules.utils")
+
+local function fade(self, start_alpha, end_alpha, duration, callback)
+	self.is_fading = true
+	self.start_alpha = start_alpha
+	self.end_alpha = end_alpha
+	self.duration = duration
+	self.elapsed_time = 0
+	self.callback = callback
+end
+
+function init(self)
+	local screen_width, screen_height = window.get_size()
+	self.gui_node = gui.get_node("fader")
+	gui.set_size(self.gui_node, vmath.vector3(screen_width, screen_height, 0))
+	gui.set_position(self.gui_node, vmath.vector3(screen_width / 2, screen_height / 2, 0))
+	self.is_fading = false
+end
+
+function update(self, dt)
+	if self.is_fading then
+		self.elapsed_time = self.elapsed_time + dt
+		local t = math.min(self.elapsed_time / self.duration, 1)
+		local new_alpha = utils.lerp(self.start_alpha, self.end_alpha, t)
+		gui.set_alpha(self.gui_node, new_alpha)
+
+		--print(t .. " " .. new_alpha .. " " .. self.start_alpha .. " " .. self.end_alpha .. " " .. self.duration .. " " .. self.elapsed_time)
+
+		if t == 1 then
+			self.is_fading = false
+			if self.callback then
+				msg.post(self.sender, "fade_done")
+			end
+		end
+	end
+end
+
+local function fade_in(self, duration, callback)
+	fade(self, 1, 0, duration, callback)
+end
+
+local function fade_out(self, duration, callback)
+	fade(self, 0, 1, duration, callback)
+end
+
+function on_message(self, message_id, message, sender)
+	if message_id == hash("fade_in") then
+		fade_in(self, message.duration, message.callback)
+		self.sender = sender
+	elseif message_id == hash("fade_out") then
+		fade_out(self, message.duration, message.callback)
+		self.sender = sender
+	end
+end

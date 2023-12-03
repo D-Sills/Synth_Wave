@@ -1,0 +1,7 @@
+local self = {}
+
+function self.lerp(a, b, t)
+	return a + (b - a) * t
+end
+
+return self
