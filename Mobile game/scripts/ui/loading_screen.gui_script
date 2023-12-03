@@ -1,0 +1,26 @@
+function init(self)
+	print("loading screen init")
+	self.gui_node = gui.get_node("made_with")
+	msg.post("main:/game_manager#scene_fader", "fade_in", {duration = 0.2, callback = true})
+end
+
+local function finish_load_scene()
+	msg.post("main:/game_manager#scene_fader", "fade_out", {duration = 0.2, callback = true})
+end
+
+function on_message(self, message_id, message, sender)
+	if message_id == hash("fade_in_done") then
+		-- random delay to simulate loading
+		self.load_duration = math.random(3, 6)
+		timer.delay(self.load_duration, false, finish_load_scene)
+	end
+	if message_id == hash("fade_out_done") then
+		msg.post("main:/game_manager#collection_manager", "finish_load_scene")
+	end
+end
+
+function update(self, dt)
+	if self.load_duration then
+		gui.set_color(self.gui_node, vmath.vector4(0, 0, 0, 1 - (self.load_duration - dt) / self.load_duration))
+	end
+end

@@ -24,12 +24,10 @@ function update(self, dt)
 		local new_alpha = utils.lerp(self.start_alpha, self.end_alpha, t)
 		gui.set_alpha(self.gui_node, new_alpha)
 
-		--print(t .. " " .. new_alpha .. " " .. self.start_alpha .. " " .. self.end_alpha .. " " .. self.duration .. " " .. self.elapsed_time)
-
 		if t == 1 then
 			self.is_fading = false
 			if self.callback then
-				msg.post(self.sender, "fade_done")
+				msg.post(self.sender, self.fadeType .. "_done")
 			end
 		end
 	end
@@ -37,10 +35,12 @@ end
 
 local function fade_in(self, duration, callback)
 	fade(self, 1, 0, duration, callback)
+	self.fadeType = "fade_in"
 end
 
 local function fade_out(self, duration, callback)
 	fade(self, 0, 1, duration, callback)
+	self.fadeType = "fade_out"
 end
 
 function on_message(self, message_id, message, sender)

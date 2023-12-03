@@ -1,6 +1,7 @@
 local self = {}
 
 local now_playing = nil
+local bpm = 120
 
 function self.play_music(event_name, fade_time)
     if not fade_time then fade_time = 0.5 end
