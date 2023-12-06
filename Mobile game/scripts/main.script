@@ -1,6 +1,8 @@
-function init(self)
-	msg.post("camera", "enable")
+local audio_manager = require("scripts.modules.audio_manager")
 
+function init(self)
+  msg.post("camera", "enable")
+  msg.post("@render:", "use_camera_projection")
 	if not fmod then
 		print("Sorry! Your platform is not yet supported.")
 		return
@@ -41,4 +43,9 @@ function init(self)
     end
 
     msg.post("/game_manager#collection_manager", "initial_load")
+end
+
+function update(dt) 
+  fmod.studio.system:update()
+  audio_manager.update(dt)
 end

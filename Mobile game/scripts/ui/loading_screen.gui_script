@@ -11,7 +11,7 @@ end
 function on_message(self, message_id, message, sender)
 	if message_id == hash("fade_in_done") then
 		-- random delay to simulate loading
-		self.load_duration = math.random(3, 6)
+		self.load_duration = math.random(1, 2)
 		timer.delay(self.load_duration, false, finish_load_scene)
 	end
 	if message_id == hash("fade_out_done") then

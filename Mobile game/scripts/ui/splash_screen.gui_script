@@ -1,6 +1,9 @@
 local audio_manager = require("scripts.modules.audio_manager")
 
+go.property("skip", true)
+
 function init(self)
+	msg.post(".", "acquire_input_focus")
 	msg.post("main:/game_manager#scene_fader", "fade_in", {duration = 0.5, callback = true})
 end
 
@@ -10,6 +13,10 @@ end
 
 function on_message(self, message_id, message, sender)
 	if message_id == hash("fade_in_done") then
+		if self.skip then
+			splash_complete()
+		end
+
 		audio_manager.play_sound_effect("event:/Weapons/Explosion")
 		self.timer = timer.delay(5, false, splash_complete)
 		msg.post(".", "acquire_input_focus")

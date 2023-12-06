@@ -1,0 +1,21 @@
+go.property("scroll_speed", 300)
+
+local segments = {
+    "/space#bg1",
+    "/space#bg2",
+}
+
+function init(self)
+    self.background_height = go.get("/space#bg1", "size")
+end
+
+function update(self, dt)
+    for i, p in ipairs(segments) do
+        local pos = go.get_position(p)
+        if pos.y < -self.background_height.y then
+            pos.y = pos.y + #segments * self.background_height.y - self.background_height.y * 0.5
+        end
+        pos.y = pos.y - self.scroll_speed * dt
+        go.set_position(pos, p)
+    end
+end

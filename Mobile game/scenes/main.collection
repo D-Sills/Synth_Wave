@@ -5,7 +5,7 @@ instances {
   position {
     x: 0.0
     y: 0.0
-    z: 5.0
+    z: 0.0
   }
   rotation {
     x: 0.0
@@ -16,13 +16,13 @@ instances {
   component_properties {
     id: "script"
     properties {
-      id: "far_z"
-      value: "10.0"
-      type: PROPERTY_TYPE_NUMBER
+      id: "follow_horizontal"
+      value: "true"
+      type: PROPERTY_TYPE_BOOLEAN
     }
     properties {
-      id: "follow"
-      value: "false"
+      id: "follow_vertical"
+      value: "true"
       type: PROPERTY_TYPE_BOOLEAN
     }
   }
@@ -35,7 +35,6 @@ instances {
 scale_along_z: 0
 embedded_instances {
   id: "game_manager"
-  children: "camera"
   children: "collections"
   data: "components {\n"
   "  id: \"main\"\n"
