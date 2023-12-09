@@ -3,6 +3,8 @@ local audio_manager = require("scripts.modules.audio_manager")
 function init(self)
   msg.post("camera", "enable")
   msg.post("@render:", "use_camera_projection")
+  msg.post("collections", "acquire_input_focus")
+
 	if not fmod then
 		print("Sorry! Your platform is not yet supported.")
 		return

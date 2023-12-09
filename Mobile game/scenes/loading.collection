@@ -4,7 +4,7 @@ embedded_instances {
   id: "go"
   data: "components {\n"
   "  id: \"loading\"\n"
-  "  component: \"/scenes/gui/loading.gui\"\n"
+  "  component: \"/gui/loading.gui\"\n"
   "  position {\n"
   "    x: 0.0\n"
   "    y: 0.0\n"

@@ -2,10 +2,17 @@ local self = {}
 
 NOW_PLAYING = nil
 BPM = 120
-CROCHET = 60 / BPM
+CROTCHET = 60 / BPM -- 1 beat
 OFFSET = 0.0
 SONG_POSITION = 0.0 + OFFSET
+
+PERFECT_THRESHOLD = 0.1  -- 100 milliseconds around the beat
+GOOD_THRESHOLD = 0.2     -- 200 milliseconds around the beat
+
 local next_beat_time = 0
+local last_beat_time = 0
+
+local beat_subscribers = {}
 
 function self.play_music(event_name, fade_time)
     if not fade_time then fade_time = 0.5 end
@@ -54,7 +61,7 @@ function self.update(dt)
         SONG_POSITION = position / 1000 + OFFSET  -- Convert from milliseconds to seconds
 
         -- Calculate the time for the next beat
-        CROCHET = 60 / BPM
+        CROTCHET = 60 / BPM
 
         -- Check if the current song position has reached the next beat time
         if SONG_POSITION >= next_beat_time then
@@ -62,15 +69,56 @@ function self.update(dt)
             self.on_beat()
 
             -- Calculate the time for the next beat
-            next_beat_time = next_beat_time + CROCHET
+            last_beat_time = next_beat_time
+            next_beat_time = next_beat_time + CROTCHET
+        else
+            ON_BEAT = false
         end
     end
 end
 
 function self.on_beat()
-    -- Logic to execute on each beat
-    print("SONG_POSITION: " .. SONG_POSITION .. " On Beat!")
-    return true
+    -- print("SONG_POSITION: " .. SONG_POSITION .. " On Beat!")
+    for url, _ in pairs(beat_subscribers) do
+        msg.post(url, "beat")
+    end
+end
+
+-- Player action timing functions
+function self.handle_player_action()
+    local player_action_time = SONG_POSITION
+    local time_diff = self.check_beat_accuracy(player_action_time)
+    local rating = self.rate_player_action(time_diff)
+
+    -- Do something with the rating, like updating score or UI
+    print("Action Rating: " .. rating)
+    return rating
+end
+
+function self.check_beat_accuracy(player_action_time)
+    local time_to_prev_beat = player_action_time - last_beat_time
+    local time_to_next_beat = next_beat_time - player_action_time
+
+    local time_diff = math.min(math.abs(time_to_prev_beat), math.abs(time_to_next_beat))
+    return time_diff
+end
+
+function self.rate_player_action(time_diff)
+    if time_diff <= PERFECT_THRESHOLD then
+        return "Perfect"
+    elseif time_diff <= GOOD_THRESHOLD then
+        return "Good"
+    else
+        return "Bad"
+    end
+end
+
+function self.subscribe(url)
+    beat_subscribers[url] = true
+end
+
+function self.unsubscribe(url)
+    beat_subscribers[url] = nil
 end
 
 return self

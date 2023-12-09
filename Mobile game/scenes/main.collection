@@ -55,7 +55,7 @@ embedded_instances {
   "}\n"
   "components {\n"
   "  id: \"scene_fader\"\n"
-  "  component: \"/scenes/gui/scene_fader.gui\"\n"
+  "  component: \"/gui/scene_fader.gui\"\n"
   "  position {\n"
   "    x: 0.0\n"
   "    y: 0.0\n"

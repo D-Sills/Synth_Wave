@@ -1,0 +1,18 @@
+local audio_manager = require("scripts.modules.audio_manager")
+
+function init(self)
+	audio_manager.subscribe(msg.url())
+	self.bar_node_left = gui.get_node("bar_left")
+	self.bar_node_right = gui.get_node("bar_right")
+end
+
+function on_message(self, message_id, message)
+	if message_id == hash("beat") then
+		gui.animate(self.bar_node_left, "scale.y", 1.5, gui.EASING_LINEAR, 0.1)
+		gui.animate(self.bar_node_right, "scale.y", 1.5, gui.EASING_LINEAR, 0.1)
+	end
+end
+
+function final(self)
+	audio_manager.unsubscribe(msg.url())
+end

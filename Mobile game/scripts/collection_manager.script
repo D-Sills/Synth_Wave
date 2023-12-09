@@ -1,3 +1,7 @@
+function init(self)
+	self.active_scene = nil
+end
+
 local function load_with_loading_screen(self, collection_name)
 	if self.active_scene then
 		print("unload " .. self.active_scene)
@@ -7,6 +11,7 @@ local function load_with_loading_screen(self, collection_name)
 			return
 		end
 
+		msg.post("main:/collections#" .. self.active_scene .. "_proxy", "release_input_focus")
 		msg.post("main:/collections#" .. self.active_scene .. "_proxy", "unload")
 	end
 	self.active_scene = collection_name
@@ -18,19 +23,13 @@ local function finish_load_scene(self)
 	msg.post("main:/collections#loading_proxy", "unload")
 	print("finish_load_scene")
 	msg.post("main:/collections#" .. self.active_scene .. "_proxy", "async_load")
+	msg.post("main:/collections#" .. self.active_scene .. "_proxy", "acquire_input_focus")
 end
 
 local function initial_load(self)
 	self.active_scene = "splash"
 	msg.post("main:/collections#" .. self.active_scene .. "_proxy", "async_load")
-end
-
-local function load_scene(collection_name)
-	
-end
-
-local function unload_scene(collection_name)
-	
+	msg.post("main:/collections#" .. self.active_scene .. "_proxy", "acquire_input_focus")
 end
 
 function on_message(self, message_id, message, sender)
@@ -43,7 +42,6 @@ function on_message(self, message_id, message, sender)
 	end
 
 	if message_id == hash("proxy_loaded") then
-        msg.post(sender, "init")
         msg.post(sender, "enable")
     end
 

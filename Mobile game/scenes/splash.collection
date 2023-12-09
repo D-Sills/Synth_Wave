@@ -1,10 +1,10 @@
 name: "splash"
 scale_along_z: 0
 embedded_instances {
-  id: "go"
+  id: "gui"
   data: "components {\n"
   "  id: \"splash_Screen\"\n"
-  "  component: \"/scenes/gui/splash.gui\"\n"
+  "  component: \"/gui/splash.gui\"\n"
   "  position {\n"
   "    x: 0.0\n"
   "    y: 0.0\n"

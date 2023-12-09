@@ -5,19 +5,22 @@ function init(self)
 	msg.post("main:/game_manager#scene_fader", "fade_in", {duration = 0.5, callback = true})
 end
 
-
 function on_message(self, message_id, message, sender)
 	if message_id == hash("fade_in_done") then
 		msg.post(".", "acquire_input_focus")
 	end
 	if message_id == hash("fade_out_done") then
-		
+		msg.post(".", "release_input_focus")
 	end
 end
 
 function on_input(self, action_id, action)
 	if action_id == hash("touch") and action.pressed then
-		print("touch")
+		local new = gui.get_node("box")
+		if gui.pick_node(new, action.x, action.y) then
+			print(audio_manager.handle_player_action())
+			return true
+		end
 	end
 end
 
