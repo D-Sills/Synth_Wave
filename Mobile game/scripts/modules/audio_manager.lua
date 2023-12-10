@@ -5,19 +5,22 @@ BPM = 120
 CROTCHET = 60 / BPM -- 1 beat
 OFFSET = 0.0
 SONG_POSITION = 0.0 + OFFSET
+SONG_LENGTH = 0.0 + OFFSET
 
 PERFECT_THRESHOLD = 0.1  -- 100 milliseconds around the beat
 GOOD_THRESHOLD = 0.2     -- 200 milliseconds around the beat
 
 local next_beat_time = 0
 local last_beat_time = 0
+local last_position = 0
 
 local beat_subscribers = {}
 
 function self.play_music(event_name, fade_time)
     if not fade_time then fade_time = 0.5 end
-
+    
     local event_description = fmod.studio.system:get_event(event_name)
+    SONG_LENGTH = event_description:get_length()
     local event = event_description:create_instance()
 
     if NOW_PLAYING == event then
@@ -28,14 +31,17 @@ function self.play_music(event_name, fade_time)
         timer.delay(fade_time, false, function()
         NOW_PLAYING = event
         NOW_PLAYING:start()
-        BPM = event:get_parameter_by_name("BPM")
+        BPM = 80
         self.fade_music(NOW_PLAYING, 0.0, 1.0, fade_time) -- Fade in over 2 seconds
     end)
     else -- No music playing
         event:start()
         NOW_PLAYING = event
-        BPM = event:get_parameter_by_name("BPM")
+        BPM = 80
     end
+    
+    print("BPM: " .. BPM)
+    print("SONG_LENGTH: " .. SONG_LENGTH)
 end
 
 function self.fade_music(event_instance, start_volume, end_volume, duration)
@@ -58,6 +64,15 @@ end
 function self.update(dt)
     if NOW_PLAYING then
         local position = NOW_PLAYING:get_timeline_position()
+
+        -- Check if the song has looped
+        if position < last_position then
+            -- Song has looped; reset beat times
+            next_beat_time = CROTCHET
+            last_beat_time = 0
+        end
+        last_position = position
+
         SONG_POSITION = position / 1000 + OFFSET  -- Convert from milliseconds to seconds
 
         -- Calculate the time for the next beat
@@ -71,11 +86,10 @@ function self.update(dt)
             -- Calculate the time for the next beat
             last_beat_time = next_beat_time
             next_beat_time = next_beat_time + CROTCHET
-        else
-            ON_BEAT = false
         end
     end
 end
+
 
 function self.on_beat()
     -- print("SONG_POSITION: " .. SONG_POSITION .. " On Beat!")

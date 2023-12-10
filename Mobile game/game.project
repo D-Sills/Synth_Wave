@@ -13,7 +13,6 @@ main_collection = /scenes/main.collectionc
 render = /orthographic/render/orthographic.renderc
 
 [input]
-game_binding = /assets/game.input_bindingc
 use_accelerometer = 0
 
 [display]

@@ -15,7 +15,7 @@ function on_message(self, message_id, message, sender)
 		timer.delay(self.load_duration, false, finish_load_scene)
 	end
 	if message_id == hash("fade_out_done") then
-		msg.post("main:/game_manager#collection_manager", "finish_load_scene")
+		msg.post("main:/collections#collection_manager", "finish_load_scene")
 	end
 end
 

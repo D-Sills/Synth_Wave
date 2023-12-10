@@ -1,4 +1,8 @@
 script: "/scripts/ui/beat_bars.gui_script"
+textures {
+  name: "ui"
+  texture: "/assets/ui.atlas"
+}
 background_color {
   x: 0.0
   y: 0.0
@@ -7,7 +11,7 @@ background_color {
 }
 nodes {
   position {
-    x: 5.0
+    x: 26.0
     y: 562.0
     z: 0.0
     w: 1.0
@@ -20,13 +24,13 @@ nodes {
   }
   scale {
     x: 1.0
-    y: 13.304675
+    y: 1.5
     z: 1.0
     w: 1.0
   }
   size {
-    x: 200.0
-    y: 100.0
+    x: 68.0
+    y: 900.0
     z: 0.0
     w: 1.0
   }
@@ -38,7 +42,7 @@ nodes {
   }
   type: TYPE_BOX
   blend_mode: BLEND_MODE_ALPHA
-  texture: ""
+  texture: "ui/gradinet"
   id: "bar_left"
   xanchor: XANCHOR_NONE
   yanchor: YANCHOR_NONE
@@ -57,7 +61,7 @@ nodes {
   clipping_inverted: false
   alpha: 1.0
   template_node_child: false
-  size_mode: SIZE_MODE_AUTO
+  size_mode: SIZE_MODE_MANUAL
   custom_type: 0
   enabled: true
   visible: true
@@ -65,26 +69,26 @@ nodes {
 }
 nodes {
   position {
-    x: 657.0
+    x: 613.0
     y: 562.0
     z: 0.0
     w: 1.0
   }
   rotation {
     x: 0.0
-    y: 0.0
+    y: -180.0
     z: 0.0
     w: 1.0
   }
   scale {
     x: 1.0
-    y: 13.304675
+    y: 1.5
     z: 1.0
     w: 1.0
   }
   size {
-    x: 200.0
-    y: 100.0
+    x: 68.0
+    y: 900.0
     z: 0.0
     w: 1.0
   }
@@ -96,7 +100,7 @@ nodes {
   }
   type: TYPE_BOX
   blend_mode: BLEND_MODE_ALPHA
-  texture: ""
+  texture: "ui/gradinet"
   id: "bar_right"
   xanchor: XANCHOR_NONE
   yanchor: YANCHOR_NONE
@@ -115,7 +119,7 @@ nodes {
   clipping_inverted: false
   alpha: 1.0
   template_node_child: false
-  size_mode: SIZE_MODE_AUTO
+  size_mode: SIZE_MODE_MANUAL
   custom_type: 0
   enabled: true
   visible: true

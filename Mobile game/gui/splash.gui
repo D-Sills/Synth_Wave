@@ -1,13 +1,5 @@
 script: "/scripts/ui/splash_screen.gui_script"
 fonts {
-  name: "Pixel"
-  font: "/assets/fonts/Pixel.font"
-}
-fonts {
-  name: "retro-future"
-  font: "/assets/fonts/retro-future.font"
-}
-fonts {
   name: "system_font"
   font: "/builtins/fonts/system_font.font"
 }

@@ -1,5 +1,6 @@
 function init(self)
 	self.active_scene = nil
+	msg.post(".", "acquire_input_focus")
 end
 
 local function load_with_loading_screen(self, collection_name)
@@ -42,7 +43,9 @@ function on_message(self, message_id, message, sender)
 	end
 
 	if message_id == hash("proxy_loaded") then
+        msg.post(sender, "init")
         msg.post(sender, "enable")
+        msg.post(sender, "acquire_input_focus")
     end
 
     if message_id == hash("finish_load_scene") then

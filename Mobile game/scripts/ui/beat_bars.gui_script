@@ -2,14 +2,29 @@ local audio_manager = require("scripts.modules.audio_manager")
 
 function init(self)
 	audio_manager.subscribe(msg.url())
-	self.bar_node_left = gui.get_node("bar_left")
-	self.bar_node_right = gui.get_node("bar_right")
+	self.left_bar  = gui.get_node("bar_left")
+	self.right_bar  = gui.get_node("bar_right")
+
+	gui.set_color(self.left_bar, vmath.vector4(1, 1, 1, 1))
+    gui.set_color(self.right_bar, vmath.vector4(1, 1, 1, 1))
 end
+
+local function pulse_bar(node, direction)
+    local initial_size = gui.get_size(node)
+    local pulse_size = vmath.vector3(initial_size.x * 1.5, initial_size.y, initial_size.z) -- Increase width by 50%
+
+    -- Pulse out
+    gui.animate(node, "size", pulse_size, gui.EASING_OUTQUAD, 0.1, 0, function()
+        -- Pulse back to initial size
+        gui.animate(node, "size", initial_size, gui.EASING_INQUAD, 0.1)
+    end)
+end
+
 
 function on_message(self, message_id, message)
 	if message_id == hash("beat") then
-		gui.animate(self.bar_node_left, "scale.y", 1.5, gui.EASING_LINEAR, 0.1)
-		gui.animate(self.bar_node_right, "scale.y", 1.5, gui.EASING_LINEAR, 0.1)
+		pulse_bar(self.left_bar)
+		pulse_bar(self.right_bar)
 	end
 end
 

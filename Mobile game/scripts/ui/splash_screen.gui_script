@@ -24,7 +24,7 @@ function on_message(self, message_id, message, sender)
 	end
 	if message_id == hash("fade_out_done") then
 		print("splash screen done")
-		msg.post("main:/game_manager#collection_manager", "load", {collection = "main_menu"})
+		msg.post("main:/collections#collection_manager", "load", {collection = "main_menu"})
 	end
 end
 
