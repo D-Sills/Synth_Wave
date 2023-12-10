@@ -3,7 +3,6 @@ local audio_manager = require("scripts.modules.audio_manager")
 SKIP = false
 
 function init(self)
-	msg.post(".", "acquire_input_focus")
 	msg.post("main:/game_manager#scene_fader", "fade_in", {duration = 0.5, callback = true})
 end
 
@@ -29,7 +28,7 @@ function on_message(self, message_id, message, sender)
 end
 
 function on_input(self, action_id, action)
-	if action_id == hash("touch") and action.pressed then
+	if (action_id == hash("click") or action_id == hash("touch")) and action.pressed then
 		print("touch")
 
 		timer.cancel(self.timer)

@@ -11,7 +11,7 @@ end
 
 function on_message(self, message_id, message, sender)
 	if message_id == hash("fade_in_done") then
-		
+		msg.post(".", "acquire_input_focus")
 	end
 	if message_id == hash("fade_out_done") then
 		msg.post(".", "release_input_focus")
@@ -24,8 +24,8 @@ local function start_game()
 end
 
 function on_input(self, action_id, action)
-    if gui.pick_node(self.button_node, action.x, action.y) then
-        if action.pressed then
+    if gui.pick_node(self.start_button, action.x, action.y) then
+        if action.pressed and (action_id == hash("click") or action_id == hash("touch")) then
             -- Play click sound
             audio_manager.play_sound_effect("event:/UI/Okay")
 
@@ -33,14 +33,14 @@ function on_input(self, action_id, action)
             start_game()
 
             -- Scale back to default when clicked
-            gui.set_scale(self.button_node, self.default_scale)
+            gui.set_scale(self.start_button, self.default_scale)
         elseif action.released then
             -- Scale up for hover effect
-            gui.set_scale(self.button_node, self.hover_scale)
+            gui.set_scale(self.start_button, self.hover_scale)
         end
     else
         -- Scale back to default when not hovering
-        gui.set_scale(self.button_node, self.default_scale)
+        gui.set_scale(self.start_button, self.default_scale)
     end
 end
 
