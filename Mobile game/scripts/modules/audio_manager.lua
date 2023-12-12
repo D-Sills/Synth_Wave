@@ -94,7 +94,11 @@ end
 function self.on_beat()
     -- print("SONG_POSITION: " .. SONG_POSITION .. " On Beat!")
     for url, _ in pairs(beat_subscribers) do
-        msg.post(url, "beat")
+        if url then  -- Check if the URL points to a valid object
+            msg.post(url, "beat")
+        else
+            self.unsubscribe(url)  -- Automatically unsubscribe invalid URLs
+        end
     end
 end
 
@@ -133,6 +137,10 @@ end
 
 function self.unsubscribe(url)
     beat_subscribers[url] = nil
+end
+
+function self.unsubscribe_all()
+    beat_subscribers = {}
 end
 
 return self

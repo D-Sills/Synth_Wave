@@ -48,5 +48,5 @@ end
 
 function update(dt) 
   fmod.studio.system:update()
-  audio_manager.update(dt)
+
 end

@@ -20,6 +20,9 @@ local function pulse_bar(node, direction)
     end)
 end
 
+function update(self, dt)
+	audio_manager.update(dt)
+end
 
 function on_message(self, message_id, message)
 	if message_id == hash("beat") then

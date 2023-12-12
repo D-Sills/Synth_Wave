@@ -1,5 +1,5 @@
 -- beat_tracker.gui_script
-local audio_manager = require "path.to.audio_manager"
+local audio_manager = require("scripts.modules.audio_manager")
 
 function init(self)
     self.chevron_template = gui.get_node("chevron_template")
@@ -7,10 +7,11 @@ function init(self)
     self.center_position = vmath.vector3(gui.get_screen_width() / 2, gui.get_screen_height() / 2, 0)
     self.spawn_position = vmath.vector3(gui.get_screen_width() / 2, 0, 0) -- This is where chevrons start
     self.beat_duration = audio_manager.CROTCHET
+    audio_manager.subscribe(msg.url())
 end
 
 function on_message(self, message_id, message, sender)
-    if message_id == hash("on_beat") then
+    if message_id == hash("beat") then
         -- Clone a new chevron from the template
         local new_chevron = gui.clone(self.chevron_template)
         table.insert(self.chevrons, new_chevron)
@@ -34,9 +35,8 @@ function final(self)
             gui.delete_node(chevron)
         end
     end
+    audio_manager.unsubscribe(msg.url())
 end
 
 function update(self, dt)
-    -- Update the audio manager, which will trigger 'on_beat' messages
-    audio_manager.update(dt)
 end

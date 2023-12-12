@@ -1,3 +1,5 @@
+local audio_manager = require("scripts.modules.audio_manager")
+
 function init(self)
 	self.active_scene = nil
 	msg.post(".", "acquire_input_focus")
@@ -13,6 +15,11 @@ local function load_with_loading_screen(self, collection_name)
 		end
 
 		msg.post("main:/collections#" .. self.active_scene .. "_proxy", "release_input_focus")
+		
+		print("unload " .. self.active_scene .. "_proxy")
+		audio_manager.unsubscribe_all()
+		msg.post("main:/collections#" .. self.active_scene .. "_proxy", "final")
+		msg.post("main:/collections#" .. self.active_scene .. "_proxy", "disable")
 		msg.post("main:/collections#" .. self.active_scene .. "_proxy", "unload")
 	end
 	self.active_scene = collection_name
@@ -46,6 +53,12 @@ function on_message(self, message_id, message, sender)
         msg.post(sender, "init")
         msg.post(sender, "enable")
     end
+    
+    if message_id == hash("proxy_unloaded") then
+        --msg.post(sender, "final")
+		--msg.post(sender, "disable")
+		print("proxy_unloaded")
+	end
 
     if message_id == hash("finish_load_scene") then
 		finish_load_scene(self)

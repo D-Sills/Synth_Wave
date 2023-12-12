@@ -16,6 +16,7 @@ render = /.defold/assets/lights/render/lights.renderc
 
 [input]
 use_accelerometer = 0
+game_binding = /builtins/input/all.input_bindingc
 
 [display]
 width = 1280

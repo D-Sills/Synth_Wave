@@ -1,0 +1,24 @@
+local audio_manager = require("scripts.modules.audio_manager")
+
+function init(self)
+	--audio_manager.play_music("event:/Music/TitleSong")
+	msg.post("main:/game_manager#scene_fader", "fade_in", {duration = 0.5, callback = true})
+	
+
+end
+
+function on_message(self, message_id, message, sender)
+	if message_id == hash("fade_in_done") then
+		msg.post(".", "acquire_input_focus")
+	end
+	if message_id == hash("fade_out_done") then
+		print("splash screen done")
+		msg.post("main:/collections#collection_manager", "load", {collection = "level_1"})
+		msg.post(".", "release_input_focus")
+	end
+end
+
+function update(dt)
+    audio_manager.update(dt)
+end
+
