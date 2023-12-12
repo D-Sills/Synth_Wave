@@ -17,7 +17,7 @@ function on_message(self, message_id, message, sender)
 			splash_complete()
 		end
 
-		audio_manager.play_sound_effect("event:/Weapons/Explosion")
+		--audio_manager.play_sound_effect("Weapons/Explosion")
 		self.timer = timer.delay(5, false, splash_complete)
 		msg.post(".", "acquire_input_focus")
 	end

@@ -1,0 +1,87 @@
+local audio_manager = require("scripts.modules.audio_manager")
+
+local chosen_song = "level_1"
+
+function init(self)
+
+	msg.post("main:/game_manager#scene_fader", "fade_in", {duration = 0.5, callback = true})
+	self.song1 = gui.get_node("song1/panel")
+	self.song2 = gui.get_node("song1/panel")
+	self.song3 = gui.get_node("song1/panel")
+    self.default_scale = gui.get_scale(self.song1)
+    self.hover_scale = vmath.vector3(1.1, 1.1, 1)
+   
+    --audio_manager.play_sound_effect("Voice/Welcome")
+end
+
+function on_message(self, message_id, message, sender)
+	if message_id == hash("fade_in_done") then
+		msg.post(".", "acquire_input_focus")
+
+	end
+	if message_id == hash("fade_out_done") then
+		msg.post("main:/collections#collection_manager", "load", {collection = chosen_song})
+		msg.post(".", "release_input_focus")
+	end
+end
+
+local function start_game()
+    -- Logic to execute when button is clicked
+    print("Button clicked!")
+    audio_manager.stop_music(0.5)
+    msg.post("main:/game_manager#scene_fader", "fade_out", {duration = 0.5, callback = true})
+    
+end
+
+function on_input(self, action_id, action)
+    if gui.pick_node(self.song1, action.x, action.y) then
+        if action.pressed and (action_id == hash("click") or action_id == hash("touch")) then
+            -- Play click sound
+            audio_manager.play_sound_effect("UI/Okay")
+            chosen_song = "level_1"
+
+            -- Trigger button action
+            start_game()
+
+            -- Scale back to default when clicked
+            gui.set_scale(self.song1, self.hover_scale)
+        elseif action.released then
+            -- Scale up for hover effect
+            gui.set_scale(self.song1, self.default_scale)
+        end
+    end
+    if gui.pick_node(self.song2, action.x, action.y) then
+        if action.pressed and (action_id == hash("click") or action_id == hash("touch")) then
+            -- Play click sound
+            audio_manager.play_sound_effect("UI/Okay")
+            chosen_song = "level_2"
+            -- Trigger button action
+            start_game()
+
+            -- Scale back to default when clicked
+            gui.set_scale(self.song2, self.hover_scale)
+        elseif action.released then
+            -- Scale up for hover effect
+            gui.set_scale(self.song2, self.default_scale)
+        end
+    end
+    if gui.pick_node(self.song3, action.x, action.y) then
+        if action.pressed and (action_id == hash("click") or action_id == hash("touch")) then
+            -- Play click sound
+            audio_manager.play_sound_effect("UI/Okay")
+            chosen_song = "level_3"
+            -- Trigger button action
+            start_game()
+
+            -- Scale back to default when clicked
+            gui.set_scale(self.song3, self.hover_scale)
+        elseif action.released then
+            -- Scale up for hover effect
+            gui.set_scale(self.song3, self.default_scale)
+        end
+    end
+end
+
+function update(self, dt)
+	audio_manager.update(dt)
+end

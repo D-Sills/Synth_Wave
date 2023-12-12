@@ -1,15 +1,15 @@
 local audio_manager = require("scripts.modules.audio_manager")
 
 
-go.property("movementSpeed", 200)
+-- go.property("movementSpeed", 200)
 go.property("max_health", 3)
 
 -- below values in beats
 go.property("shootCooldown", 0.2)
-go.property("invulnerabilityTime", 2)
+go.property("invulnerabilityTime", 2) -- idk if needed
 
 function init(self)
-	msg.post("main:/camera", "follow", { target = hash("level/#player"), lerp = 0.7, horizontal = true, vertical = true, immediate = true })
+	--msg.post("main:/camera", "follow", { target = hash("level/#player"), lerp = 0.7, horizontal = true, vertical = true, immediate = true })
 	msg.post("gui", "register")
 	--msg.post("gui", "register_analog", { id = "analog", radius = 80 })
 	msg.post("gui", "register_analog", { id = "analog", radius = 80 })
@@ -29,8 +29,8 @@ end
 
 function update(self, dt)
 	-- movement
-	go.set_position(go.get_position() + self.velocity * dt)
-	go.set_position(go.get_position("weapon") + self.velocity * dt, "weapon")
+	--go.set_position(go.get_position() + self.velocity * dt)
+	--go.set_position(go.get_position("weapon") + self.velocity * dt, "weapon")
 
 
 	-- fire rate
@@ -87,6 +87,8 @@ function on_message(self, message_id, message, sender)
 			local target_position = spawn_position + forward_vector * move_distance
 			local travel_time = move_distance / projectile_speed
 	
+			audio_manager.play_sound_effect("Combat/LaserSmall")
+	
 			go.animate(id, "position", go.PLAYBACK_ONCE_FORWARD, target_position, go.EASING_LINEAR, travel_time, 0, function()
 				go.delete(id) -- Delete the projectile once it reaches the target position
 			end)
@@ -136,12 +138,6 @@ function on_message(self, message_id, message, sender)
 			end
 		end
 	
-	end
-end
-
-function on_input(self, action_id, action)
-	if (action_id == hash("click") or action_id == hash("touch")) and action.pressed then
-		
 	end
 end
 

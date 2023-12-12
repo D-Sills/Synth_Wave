@@ -17,7 +17,7 @@ local function load_with_loading_screen(self, collection_name)
 		msg.post("main:/collections#" .. self.active_scene .. "_proxy", "release_input_focus")
 		
 		print("unload " .. self.active_scene .. "_proxy")
-		audio_manager.unsubscribe_all()
+		audio_manager.unsubscribe_all() -- not working in finak() idk why
 		msg.post("main:/collections#" .. self.active_scene .. "_proxy", "final")
 		msg.post("main:/collections#" .. self.active_scene .. "_proxy", "disable")
 		msg.post("main:/collections#" .. self.active_scene .. "_proxy", "unload")

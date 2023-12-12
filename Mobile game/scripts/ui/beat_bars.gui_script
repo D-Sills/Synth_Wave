@@ -5,8 +5,8 @@ function init(self)
 	self.left_bar  = gui.get_node("bar_left")
 	self.right_bar  = gui.get_node("bar_right")
 
-	gui.set_color(self.left_bar, vmath.vector4(1, 1, 1, 1))
-    gui.set_color(self.right_bar, vmath.vector4(1, 1, 1, 1))
+	gui.set_color(self.left_bar, vmath.vector4(0.73, 0, 1, 1))
+    gui.set_color(self.right_bar, vmath.vector4(0.73, 0, 1, 1))
 end
 
 local function pulse_bar(node, direction)
@@ -20,9 +20,7 @@ local function pulse_bar(node, direction)
     end)
 end
 
-function update(self, dt)
-	audio_manager.update(dt)
-end
+
 
 function on_message(self, message_id, message)
 	if message_id == hash("beat") then

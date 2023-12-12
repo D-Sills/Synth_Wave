@@ -19,7 +19,7 @@ local beat_subscribers = {}
 function self.play_music(event_name, fade_time)
     if not fade_time then fade_time = 0.5 end
     
-    local event_description = fmod.studio.system:get_event(event_name)
+    local event_description = fmod.studio.system:get_event("event:/" .. event_name)
     SONG_LENGTH = event_description:get_length()
     local event = event_description:create_instance()
 
@@ -31,17 +31,28 @@ function self.play_music(event_name, fade_time)
         timer.delay(fade_time, false, function()
         NOW_PLAYING = event
         NOW_PLAYING:start()
-        BPM = 80
         self.fade_music(NOW_PLAYING, 0.0, 1.0, fade_time) -- Fade in over 2 seconds
     end)
     else -- No music playing
         event:start()
         NOW_PLAYING = event
-        BPM = 80
     end
-    
+
     print("BPM: " .. BPM)
     print("SONG_LENGTH: " .. SONG_LENGTH)
+end
+
+function self.stop_music(fade_time)
+    if not fade_time then fade_time = 0.5 end
+
+    if NOW_PLAYING then
+        self.fade_music(NOW_PLAYING, 1.0, 0.0, fade_time) -- Fade out over 2 seconds
+
+        timer.delay(fade_time, false, function()
+            NOW_PLAYING:stop(fmod.STUDIO_STOP_MODE_ALLOWFADEOUT)
+            NOW_PLAYING = nil
+        end)
+    end
 end
 
 function self.fade_music(event_instance, start_volume, end_volume, duration)
@@ -56,7 +67,7 @@ function self.fade_music(event_instance, start_volume, end_volume, duration)
 end
 
 function self.play_sound_effect(event_name)
-    local event_description = fmod.studio.system:get_event(event_name)
+    local event_description = fmod.studio.system:get_event("event:/" .. event_name)
     local event = event_description:create_instance()
     event:start()
 end

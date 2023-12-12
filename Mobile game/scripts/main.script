@@ -22,7 +22,7 @@ function init(self)
     isBundled and system_name ~= "HTML5"
     then
       if system_name == "Android" then
-        bank_path = "file:///android_asset/banks/"
+        bank_path = "file:///android_asset/banks/Mobile/"
       else
         local sep = sys_config.path_sep
         bank_path = sys_config.bundle_root_path

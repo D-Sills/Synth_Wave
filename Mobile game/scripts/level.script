@@ -1,9 +1,40 @@
 local audio_manager = require("scripts.modules.audio_manager")
+local utils = require("scripts.modules.utils")
+
+go.property("BPM", 124)
+
+local function spawn_enemy(enemy_type, position)
+	-- Spawn logic for enemies
+end
+
+local function spawn_wave(enemy_type, count)
+	for i = 1, count do
+		spawn_enemy(enemy_type, utils.random_position())
+	end
+end
+
+local timeline = { -- surely a better way to do this? idk. i guess some sort of custom editor, but this'll do for now (O-O)-b
+	{ time = 0, action = function() 
+		audio_manager.play_sound_effect("Voice/Begin Countdown") 
+		audio_manager.BPM = 124
+	end },
+	{ time = 3, action = function() audio_manager.play_music("Music/All I Need", 0.5) end },
+	{ time = 30, action = function() spawn_enemy("fast_enemy", utils.random_position()) end },
+	{ time = 45, action = function() spawn_wave("intense_enemy", 5) end },
+	-- More events...
+}
+
+local function initialize_timeline(self)
+	for _, event in ipairs(timeline) do
+		timer.delay(event.time, false, event.action)
+	end
+end
 
 function init(self)
 	--audio_manager.play_music("event:/Music/TitleSong")
+	audio_manager.BPM = self.BPM
 	msg.post("main:/game_manager#scene_fader", "fade_in", {duration = 0.5, callback = true})
-	
+	initialize_timeline(self)
 
 end
 

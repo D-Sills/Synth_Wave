@@ -1,11 +1,12 @@
 -- beat_tracker.gui_script
 local audio_manager = require("scripts.modules.audio_manager")
+local utils = require("scripts.modules.utils")
 
 function init(self)
     self.chevron_template = gui.get_node("chevron_template")
     self.chevrons = {}
-    self.center_position = vmath.vector3(gui.get_screen_width() / 2, gui.get_screen_height() / 2, 0)
-    self.spawn_position = vmath.vector3(gui.get_screen_width() / 2, 0, 0) -- This is where chevrons start
+    self.center_position = vmath.vector3(utils.SCREEN_WIDTH / 2, utils.SCREEN_HEIGHT / 2, 0)
+    self.spawn_position = vmath.vector3(utils.SCREEN_WIDTH / 2, 0, 0) -- This is where chevrons start
     self.beat_duration = audio_manager.CROTCHET
     audio_manager.subscribe(msg.url())
 end
@@ -31,7 +32,7 @@ end
 function final(self)
     -- Clean up any cloned nodes to avoid memory leaks
     for _, chevron in pairs(self.chevrons) do
-        if gui.exists(chevron) then
+        if gui.is_enabled(chevron, true) then
             gui.delete_node(chevron)
         end
     end
