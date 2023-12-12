@@ -1,0 +1,42 @@
+-- beat_tracker.gui_script
+local audio_manager = require "path.to.audio_manager"
+
+function init(self)
+    self.chevron_template = gui.get_node("chevron_template")
+    self.chevrons = {}
+    self.center_position = vmath.vector3(gui.get_screen_width() / 2, gui.get_screen_height() / 2, 0)
+    self.spawn_position = vmath.vector3(gui.get_screen_width() / 2, 0, 0) -- This is where chevrons start
+    self.beat_duration = audio_manager.CROTCHET
+end
+
+function on_message(self, message_id, message, sender)
+    if message_id == hash("on_beat") then
+        -- Clone a new chevron from the template
+        local new_chevron = gui.clone(self.chevron_template)
+        table.insert(self.chevrons, new_chevron)
+        gui.set_position(new_chevron, self.spawn_position)
+        
+        -- Calculate the duration it should take to reach the center based on the BPM
+        local travel_time = self.beat_duration
+        gui.animate(new_chevron, "position", self.center_position, gui.EASING_LINEAR, travel_time)
+        
+        -- Set a timer to delete the chevron after it reaches the center
+        timer.delay(travel_time, false, function()
+            gui.delete_node(new_chevron)
+        end)
+    end
+end
+
+function final(self)
+    -- Clean up any cloned nodes to avoid memory leaks
+    for _, chevron in pairs(self.chevrons) do
+        if gui.exists(chevron) then
+            gui.delete_node(chevron)
+        end
+    end
+end
+
+function update(self, dt)
+    -- Update the audio manager, which will trigger 'on_beat' messages
+    audio_manager.update(dt)
+end

@@ -1,6 +1,6 @@
 script: ""
 fonts {
-  name: "system_font"
+  name: "Kenney Rocket"
   font: "/assets/fonts/Kenney Rocket.font"
 }
 textures {
@@ -23,7 +23,7 @@ nodes {
   rotation {
     x: 0.0
     y: 0.0
-    z: 0.0
+    z: 45.0
     w: 1.0
   }
   scale {
@@ -33,8 +33,8 @@ nodes {
     w: 1.0
   }
   size {
-    x: 300.0
-    y: 100.0
+    x: 500.0
+    y: 500.0
     z: 0.0
     w: 1.0
   }
@@ -46,7 +46,7 @@ nodes {
   }
   type: TYPE_BOX
   blend_mode: BLEND_MODE_ALPHA
-  texture: "ui/glassPanel"
+  texture: "ui/button"
   id: "button"
   xanchor: XANCHOR_NONE
   yanchor: YANCHOR_NONE
@@ -55,10 +55,10 @@ nodes {
   layer: ""
   inherit_alpha: true
   slice9 {
-    x: 10.0
-    y: 10.0
-    z: 10.0
-    w: 10.0
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 0.0
   }
   clipping_mode: CLIPPING_MODE_NONE
   clipping_visible: true
@@ -81,18 +81,18 @@ nodes {
   rotation {
     x: 0.0
     y: 0.0
-    z: 0.0
+    z: -45.0
     w: 1.0
   }
   scale {
-    x: 1.6
-    y: 2.0
-    z: 1.6
+    x: 1.0
+    y: 1.0
+    z: 1.0
     w: 1.0
   }
   size {
-    x: 175.0
-    y: 40.0
+    x: 200.0
+    y: 200.0
     z: 0.0
     w: 1.0
   }
@@ -102,37 +102,29 @@ nodes {
     z: 1.0
     w: 1.0
   }
-  type: TYPE_TEXT
+  type: TYPE_BOX
   blend_mode: BLEND_MODE_ALPHA
-  text: "Button"
-  font: "system_font"
-  id: "text"
+  texture: ""
+  id: "box"
   xanchor: XANCHOR_NONE
   yanchor: YANCHOR_NONE
   pivot: PIVOT_CENTER
-  outline {
-    x: 0.0
-    y: 0.0
-    z: 0.0
-    w: 1.0
-  }
-  shadow {
-    x: 1.0
-    y: 1.0
-    z: 1.0
-    w: 1.0
-  }
   adjust_mode: ADJUST_MODE_FIT
-  line_break: false
   parent: "button"
   layer: ""
   inherit_alpha: true
+  slice9 {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 0.0
+  }
+  clipping_mode: CLIPPING_MODE_NONE
+  clipping_visible: true
+  clipping_inverted: false
   alpha: 1.0
-  outline_alpha: 0.5
-  shadow_alpha: 0.0
   template_node_child: false
-  text_leading: 1.0
-  text_tracking: 0.0
+  size_mode: SIZE_MODE_MANUAL
   custom_type: 0
   enabled: true
   visible: true

@@ -6,6 +6,7 @@ function init(self)
 	self.start_button = gui.get_node("start_button/button")
     self.default_scale = gui.get_scale(self.start_button)
     self.hover_scale = vmath.vector3(1.6, 1.6, 1)
+    msg.post("main:/camera", "shake", { intensity = 0.05, duration = 2.5, direction = "both" })
 
 end
 
