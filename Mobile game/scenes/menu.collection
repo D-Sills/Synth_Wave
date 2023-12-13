@@ -21,7 +21,7 @@ embedded_instances {
   "}\n"
   "components {\n"
   "  id: \"beat_tracking\"\n"
-  "  component: \"/gui/beat_tracking.gui\"\n"
+  "  component: \"/gui/beat_bars.gui\"\n"
   "  position {\n"
   "    x: 0.0\n"
   "    y: 0.0\n"

@@ -21,4 +21,8 @@ function self.random_position()
     return vmath.vector3(x, y, 0)
 end
 
+function self.get_screen_size()
+	return {width = SCREEN_WIDTH, height = SCREEN_HEIGHT}
+end
+
 return self

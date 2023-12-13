@@ -172,7 +172,7 @@ nodes {
   type: TYPE_TEXT
   blend_mode: BLEND_MODE_ALPHA
   text: "loading..."
-  font: "Kenney Rocket"
+  font: "Kenney Space"
   id: "loading"
   xanchor: XANCHOR_NONE
   yanchor: YANCHOR_BOTTOM

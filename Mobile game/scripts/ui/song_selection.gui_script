@@ -6,11 +6,18 @@ function init(self)
 
 	msg.post("main:/game_manager#scene_fader", "fade_in", {duration = 0.5, callback = true})
 	self.song1 = gui.get_node("song1/panel")
-	self.song2 = gui.get_node("song1/panel")
-	self.song3 = gui.get_node("song1/panel")
-    self.default_scale = gui.get_scale(self.song1)
-    self.hover_scale = vmath.vector3(1.1, 1.1, 1)
+	self.song2 = gui.get_node("song2/panel")
+	self.song3 = gui.get_node("song3/panel")
+    self.play_button = gui.get_node("play/button")
+    self.exit_button = gui.get_node("back/button")
+    self.default_song_scale = gui.get_scale(self.song1)
+    self.song_hover_scale = vmath.vector3(1.1, 1.1, 1)
+    self.default_button_scale = gui.get_scale(self.play_button)
+    self.button_hover_scale = vmath.vector3(0.35, 0.35, 1)
    
+    gui.set_scale(self.song1, self.song_hover_scale)
+    gui.set_scale(self.song2, self.default_song_scale)
+    gui.set_scale(self.song3, self.default_song_scale)
     --audio_manager.play_sound_effect("Voice/Welcome")
 end
 
@@ -40,14 +47,11 @@ function on_input(self, action_id, action)
             audio_manager.play_sound_effect("UI/Okay")
             chosen_song = "level_1"
 
-            -- Trigger button action
-            start_game()
-
-            -- Scale back to default when clicked
-            gui.set_scale(self.song1, self.hover_scale)
-        elseif action.released then
-            -- Scale up for hover effect
-            gui.set_scale(self.song1, self.default_scale)
+            audio_manager.play_music("Music/All I Need", 0.1)
+            
+            gui.set_scale(self.song1, self.song_hover_scale)
+            gui.set_scale(self.song2, self.default_song_scale)
+            gui.set_scale(self.song3, self.default_song_scale)
         end
     end
     if gui.pick_node(self.song2, action.x, action.y) then
@@ -55,14 +59,12 @@ function on_input(self, action_id, action)
             -- Play click sound
             audio_manager.play_sound_effect("UI/Okay")
             chosen_song = "level_2"
-            -- Trigger button action
-            start_game()
+            
+            audio_manager.play_music("Music/AnalogHack", 0.1)
 
-            -- Scale back to default when clicked
-            gui.set_scale(self.song2, self.hover_scale)
-        elseif action.released then
-            -- Scale up for hover effect
-            gui.set_scale(self.song2, self.default_scale)
+            gui.set_scale(self.song1, self.default_song_scale)
+            gui.set_scale(self.song2, self.song_hover_scale)
+            gui.set_scale(self.song3, self.default_song_scale)
         end
     end
     if gui.pick_node(self.song3, action.x, action.y) then
@@ -70,14 +72,45 @@ function on_input(self, action_id, action)
             -- Play click sound
             audio_manager.play_sound_effect("UI/Okay")
             chosen_song = "level_3"
+            
+            audio_manager.play_music("Music/Hi-Rise", 0.1)
+
+            gui.set_scale(self.song1, self.default_song_scale)
+            gui.set_scale(self.song2, self.default_song_scale)
+            gui.set_scale(self.song3, self.song_hover_scale)
+        end
+    end
+    if gui.pick_node(self.play_button, action.x, action.y) then
+        if action.pressed and (action_id == hash("click") or action_id == hash("touch")) then
+            -- Play click sound
+            audio_manager.play_sound_effect("UI/Okay")
+            
             -- Trigger button action
             start_game()
 
             -- Scale back to default when clicked
-            gui.set_scale(self.song3, self.hover_scale)
+            gui.set_scale(self.play_button, self.button_hover_scale)
         elseif action.released then
             -- Scale up for hover effect
-            gui.set_scale(self.song3, self.default_scale)
+            gui.set_scale(self.play_button, self.default_button_scale)
+        end
+    end
+    if gui.pick_node(self.exit_button, action.x, action.y) then
+        if action.pressed and (action_id == hash("click") or action_id == hash("touch")) then
+            -- Play click sound
+            audio_manager.play_sound_effect("UI/Okay")
+            
+            msg.post('.', "release_input_focus")
+            -- Trigger button action
+            msg.post("main:/game_manager#scene_fader", "fade_out", {duration = 0.5, callback = true})
+            
+            chosen_song = "main_menu" -- i'm lazy (O-O)-b
+            
+            -- Scale back to default when clicked
+            gui.set_scale(self.exit_button, self.button_hover_scale)
+        elseif action.released then
+            -- Scale up for hover effect
+            gui.set_scale(self.exit_button, self.default_button_scale)
         end
     end
 end

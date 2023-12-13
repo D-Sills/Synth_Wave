@@ -290,7 +290,7 @@ nodes {
   type: TYPE_TEXT
   blend_mode: BLEND_MODE_ALPHA
   text: "made with"
-  font: "Kenney Rocket"
+  font: "Kenney Space"
   id: "made_with"
   xanchor: XANCHOR_NONE
   yanchor: YANCHOR_BOTTOM

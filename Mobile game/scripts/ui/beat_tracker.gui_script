@@ -1,43 +1,73 @@
--- beat_tracker.gui_script
 local audio_manager = require("scripts.modules.audio_manager")
 local utils = require("scripts.modules.utils")
 
-function init(self)
-    self.chevron_template = gui.get_node("chevron_template")
-    self.chevrons = {}
-    self.center_position = vmath.vector3(utils.SCREEN_WIDTH / 2, utils.SCREEN_HEIGHT / 2, 0)
-    self.spawn_position = vmath.vector3(utils.SCREEN_WIDTH / 2, 0, 0) -- This is where chevrons start
-    self.beat_duration = audio_manager.CROTCHET
-    audio_manager.subscribe(msg.url())
+
+local function spawn_beat_rectangles(self, beat_index)
+    -- Spawn a pair of rectangles for the beat, one from each side
+    local start_x_left = self.center_line_x - (self.beat_distance * beat_index)
+    local start_x_right = self.center_line_x + (self.beat_distance * beat_index)
+    local start_y = 100  -- Adjust Y to where you want the rectangles to align
+
+    local new_left_rectangle = gui.clone(self.rectangle_template)
+    local new_right_rectangle = gui.clone(self.rectangle_template)
+
+    gui.set_position(new_left_rectangle, vmath.vector3(start_x_left, start_y, 0))
+    gui.set_position(new_right_rectangle, vmath.vector3(start_x_right, start_y, 0))
+
+    table.insert(self.left_rectangles, new_left_rectangle)
+    table.insert(self.right_rectangles, new_right_rectangle)
+
+    -- Animate rectangles towards the center
+    local end_x_left = self.center_line_x
+    local end_x_right = self.center_line_x
+    local travel_time = audio_manager.get_crotchet() * beat_index
+
+    gui.animate(new_left_rectangle, "position.x", end_x_left, gui.EASING_LINEAR, travel_time)
+    gui.animate(new_right_rectangle, "position.x", end_x_right, gui.EASING_LINEAR, travel_time, 0, function()
+        gui.delete_node(new_left_rectangle)
+        gui.delete_node(new_right_rectangle)
+    end)
 end
+
+function init(self)
+    self.screen_width = utils.get_screen_size().width
+    self.screen_height = utils.get_screen_size().height
+    self.rectangle_template = gui.get_node("rectangle_template")  -- Updated to rectangle
+    self.left_rectangles = {}  
+    self.right_rectangles = {} 
+    self.beats_ahead = 4
+    self.center_line_x = self.screen_width / 2
+    -- Set spawn_positions for rectangles, potentially around the screen edges
+    self.beat_distance = self.screen_width / (self.beats_ahead + 1)  -- Distance between beats
+      -- How many beats ahead to show
+    audio_manager.subscribe(msg.url())
+
+    for i = 1, self.beats_ahead do
+        spawn_beat_rectangles(self, i)
+    end
+end
+
+
+
 
 function on_message(self, message_id, message, sender)
     if message_id == hash("beat") then
-        -- Clone a new chevron from the template
-        local new_chevron = gui.clone(self.chevron_template)
-        table.insert(self.chevrons, new_chevron)
-        gui.set_position(new_chevron, self.spawn_position)
-        
-        -- Calculate the duration it should take to reach the center based on the BPM
-        local travel_time = self.beat_duration
-        gui.animate(new_chevron, "position", self.center_position, gui.EASING_LINEAR, travel_time)
-        
-        -- Set a timer to delete the chevron after it reaches the center
-        timer.delay(travel_time, false, function()
-            gui.delete_node(new_chevron)
-        end)
+        -- On each beat, spawn new rectangles for the next beat in the sequence
+        spawn_beat_rectangles(self, self.beats_ahead)
+        -- Remove the rectangles that have reached the center (current beat)
+        if #self.left_rectangles > 0 then
+            gui.delete_node(table.remove(self.left_rectangles, 1))
+            gui.delete_node(table.remove(self.right_rectangles, 1))
+        end
     end
 end
 
 function final(self)
-    -- Clean up any cloned nodes to avoid memory leaks
-    for _, chevron in pairs(self.chevrons) do
-        if gui.is_enabled(chevron, true) then
-            gui.delete_node(chevron)
-        end
+    for i, rect in ipairs(self.left_rectangles) do
+        gui.delete_node(rect)
+        gui.delete_node(self.right_rectangles[i])
     end
+    self.left_rectangles = {}
+    self.right_rectangles = {}
     audio_manager.unsubscribe(msg.url())
-end
-
-function update(self, dt)
 end

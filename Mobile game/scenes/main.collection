@@ -164,7 +164,7 @@ embedded_instances {
   "embedded_components {\n"
   "  id: \"level_1_proxy\"\n"
   "  type: \"collectionproxy\"\n"
-  "  data: \"collection: \\\"/scenes/level.collection\\\"\\n"
+  "  data: \"collection: \\\"/scenes/level_1_all_you.collection\\\"\\n"
   "exclude: false\\n"
   "\"\n"
   "  position {\n"

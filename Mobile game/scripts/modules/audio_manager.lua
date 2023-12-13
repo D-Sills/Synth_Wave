@@ -23,9 +23,10 @@ function self.play_music(event_name, fade_time)
     SONG_LENGTH = event_description:get_length()
     local event = event_description:create_instance()
 
-    if NOW_PLAYING == event then
-        return
-    elseif NOW_PLAYING then
+    if NOW_PLAYING then
+        if event_description == NOW_PLAYING:get_description()  then
+            return
+        end
         self.fade_music(NOW_PLAYING, 1.0, 0.0, fade_time) -- Fade out over 2 seconds
 
         timer.delay(fade_time, false, function()
@@ -49,7 +50,7 @@ function self.stop_music(fade_time)
         self.fade_music(NOW_PLAYING, 1.0, 0.0, fade_time) -- Fade out over 2 seconds
 
         timer.delay(fade_time, false, function()
-            NOW_PLAYING:stop(fmod.STUDIO_STOP_MODE_ALLOWFADEOUT)
+            --NOW_PLAYING:stop(fmod.STUDIO_STOP_MODE_ALLOWFADEOUT)
             NOW_PLAYING = nil
         end)
     end
@@ -152,6 +153,15 @@ end
 
 function self.unsubscribe_all()
     beat_subscribers = {}
+end
+
+function self.get_crotchet()
+    return CROTCHET
+end
+
+function self.set_bpm(new_bpm)
+    BPM = new_bpm
+    CROTCHET = 60 / BPM
 end
 
 return self
