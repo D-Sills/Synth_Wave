@@ -1,35 +1,61 @@
 -- bumper.script
 local audio_manager = require("scripts.modules.audio_manager")
+local utils = require("scripts.modules.utils")
+
+go.property("health", 3)
+go.property("speed", 10)
+go.property("rotation_speed", 20)
 
 function init(self)
-    self.speed = 100
-    self.next_attack_time = 0
-    audio_manager.subscribe(msg.url())
+    audio_manager.subscribe(msg.url("."))
+    self.screen_width = utils.get_screen_size().width
+    self.screen_height = utils.get_screen_size().height
+    self.target_pos = vmath.vector3(self.screen_width / 2, self.screen_height / 2 + 30, 0)
+    --go.set(msg.url("#sprite"), "tint", vmath.vector4(1, 0, 0, 1))
 end
 
 function update(self, dt)
-    self.next_attack_time = self.next_attack_time - dt
-    local pos = go.get_position()
-    local target_pos = go.get_position(player_url)
-    local dir = vmath.normalize(target_pos - pos)
-    
-    if audio_manager.is_on_beat() and self.next_attack_time <= 0 then
-        self.next_attack_time = audio_manager.get_beat_duration()
-        -- Move aggressively towards the player on the beat
-        go.set_position(pos + dir * self.speed * dt)
-    else
-        -- Otherwise, move normally towards the player
-        go.set_position(pos + dir * (self.speed / 2) * dt)
-    end
+    local current_rotation = go.get_rotation()
+    local delta_rotation = vmath.quat_rotation_z(math.rad(self.rotation_speed * dt))
+    go.set_rotation(current_rotation * delta_rotation)
+end
+
+
+local function die(self)
+    audio_manager.unsubscribe(msg.url("."))
+    -- audio_manager.play_sound_effect("explosion_sound")
+    --local particle_path = go.get_id("explosion_particlefx")  -- Replace with your actual particle FX component ID
+    --particlefx.play(particle_path)
+    go.delete()
 end
 
 function on_message(self, message_id, message, sender)
     if message_id == hash("beat") then
-        -- Play a sound on the beat
-        audio_manager.play_sound("event:/SFX/Enemy/Bumper/Attack")
-    end
-end
+        local pos = go.get_position()
+        local dir_to_player = self.target_pos - pos
+        local distance_to_player = vmath.length(dir_to_player)
 
-function final(self)
-    audio_manager.unsubscribe(msg.url())
+        if distance_to_player > 10 then -- Stopping distance
+            local move_dir = vmath.normalize(dir_to_player)
+            local move_distance = self.speed -- Adjust this value if you want bigger or smaller jumps
+            local new_pos = pos + move_dir * move_distance
+            print("new pos:" .. pos.x .. "," .. pos.y)
+            go.set_position(new_pos)
+        end
+        
+    elseif message_id == hash("collision_response") then
+        print (message.other_id)
+        -- hash needs to include the collection proxy
+        if (message.other_id == hash("/player")) then
+            -- Player collision
+            print ("collision player")
+            msg.post(message.other_id, "take_damage", {damage = 1})
+            die(self)
+        elseif (message.group == hash("bullet")) then
+            -- Bullet collision
+            print("collision bullet")
+            go.delete(message.other_id)
+            die(self)
+        end
+    end
 end

@@ -1053,7 +1053,7 @@ nodes {
   }
   type: TYPE_TEXT
   blend_mode: BLEND_MODE_ALPHA
-  text: "All I Needed To Know\n"
+  text: "High Rise Cocktail\n"
   "Ash Green"
   font: "Kenney Space"
   id: "song3/text1"
@@ -1080,6 +1080,7 @@ nodes {
   alpha: 1.0
   outline_alpha: 1.0
   shadow_alpha: 1.0
+  overridden_fields: 8
   template_node_child: true
   text_leading: 1.0
   text_tracking: 0.0
@@ -1091,7 +1092,7 @@ nodes {
 nodes {
   position {
     x: 0.0
-    y: -271.0
+    y: -268.0
     z: 0.0
     w: 1.0
   }
@@ -1149,7 +1150,7 @@ nodes {
 }
 nodes {
   position {
-    x: -120.0
+    x: -190.0
     y: 33.0
     z: 0.0
     w: 1.0
@@ -1161,8 +1162,8 @@ nodes {
     w: 1.0
   }
   scale {
-    x: 0.3
-    y: 0.3
+    x: 0.2
+    y: 0.2
     z: 1.0
     w: 1.0
   }
@@ -1309,7 +1310,7 @@ nodes {
 }
 nodes {
   position {
-    x: 120.0
+    x: 0.0
     y: 33.0
     z: 0.0
     w: 1.0

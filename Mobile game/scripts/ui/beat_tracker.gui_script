@@ -6,7 +6,7 @@ local function spawn_beat_rectangles(self, beat_index)
     -- Spawn a pair of rectangles for the beat, one from each side
     local start_x_left = self.center_line_x - (self.beat_distance * beat_index)
     local start_x_right = self.center_line_x + (self.beat_distance * beat_index)
-    local start_y = 100  -- Adjust Y to where you want the rectangles to align
+    local start_y = 65
 
     local new_left_rectangle = gui.clone(self.rectangle_template)
     local new_right_rectangle = gui.clone(self.rectangle_template)
@@ -17,7 +17,7 @@ local function spawn_beat_rectangles(self, beat_index)
     table.insert(self.left_rectangles, new_left_rectangle)
     table.insert(self.right_rectangles, new_right_rectangle)
 
-    -- Animate rectangles towards the center
+    -- animate rectangles towards the center
     local end_x_left = self.center_line_x
     local end_x_right = self.center_line_x
     local travel_time = audio_manager.get_crotchet() * beat_index
@@ -32,15 +32,18 @@ end
 function init(self)
     self.screen_width = utils.get_screen_size().width
     self.screen_height = utils.get_screen_size().height
-    self.rectangle_template = gui.get_node("rectangle_template")  -- Updated to rectangle
+    self.rectangle_template = gui.get_node("rectangle_template")  
     self.left_rectangles = {}  
     self.right_rectangles = {} 
     self.beats_ahead = 4
     self.center_line_x = self.screen_width / 2
-    -- Set spawn_positions for rectangles, potentially around the screen edges
-    self.beat_distance = self.screen_width / (self.beats_ahead + 1)  -- Distance between beats
-      -- How many beats ahead to show
+    
+    self.beat_distance = self.screen_width / (self.beats_ahead + 1)
     audio_manager.subscribe(msg.url())
+
+    self.heart = gui.get_node("heart")
+    self.heart_default_scale = gui.get_scale(self.heart)
+    self.heart_hover_scale = vmath.vector3(0.25, 0.25, 1)
 
     for i = 1, self.beats_ahead do
         spawn_beat_rectangles(self, i)
@@ -54,11 +57,15 @@ function on_message(self, message_id, message, sender)
     if message_id == hash("beat") then
         -- On each beat, spawn new rectangles for the next beat in the sequence
         spawn_beat_rectangles(self, self.beats_ahead)
-        -- Remove the rectangles that have reached the center (current beat)
+        -- remove the rectangles that have reached the center
         if #self.left_rectangles > 0 then
-            gui.delete_node(table.remove(self.left_rectangles, 1))
-            gui.delete_node(table.remove(self.right_rectangles, 1))
+            --gui.delete_node(self.left_rectangles[1])
+            --gui.delete_node(self.right_rectangles[1])
         end
+        
+        gui.animate(self.heart, "scale", self.heart_hover_scale, gui.EASING_LINEAR, 0.1, 0, function()
+            gui.animate(self.heart, "scale", self.heart_default_scale, gui.EASING_LINEAR, 0.1)
+        end)
     end
 end
 

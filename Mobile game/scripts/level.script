@@ -2,9 +2,19 @@ local audio_manager = require("scripts.modules.audio_manager")
 local utils = require("scripts.modules.utils")
 
 go.property("BPM", 124)
+go.property("enemy_1_factory", hash(""))
+go.property("enemy_2_factory", hash(""))
+go.property("enemy_3_factory", hash(""))
 
 local function spawn_enemy(enemy_type, position)
 	-- Spawn logic for enemies
+	if enemy_type == "1" then
+		factory.create("#enemy_1_factory", position)
+	elseif enemy_type == "2" then
+		factory.create("#enemy_2_factory", position)
+	elseif enemy_type == "3" then
+		factory.create("#enemy_3_factory", position)
+	end
 end
 
 local function spawn_wave(enemy_type, count)
@@ -13,13 +23,18 @@ local function spawn_wave(enemy_type, count)
 	end
 end
 
+local function end_level()
+	msg.post(".", "release_input_focus")
+	msg.post("main:/game_manager#scene_fader", "fade_out", {duration = 0.5, callback = true})
+end
+
 local timeline = { -- surely a better way to do this? idk. i guess some sort of custom editor, but this'll do for now (O-O)-b
 	{ time = 0, action = function() 
 		audio_manager.play_sound_effect("Voice/Begin Countdown") 
 		audio_manager.BPM = 124
 	end },
 	{ time = 3, action = function() audio_manager.play_music("Music/All I Need", 0.5) end },
-	{ time = 30, action = function() spawn_enemy("fast_enemy", utils.random_position()) end },
+	{ time = 5, action = function() spawn_enemy("1", utils.random_position()) end },
 	{ time = 45, action = function() spawn_wave("intense_enemy", 5) end },
 	-- More events...
 }
@@ -43,9 +58,9 @@ function on_message(self, message_id, message, sender)
 		msg.post(".", "acquire_input_focus")
 	end
 	if message_id == hash("fade_out_done") then
-		print("splash screen done")
-		msg.post("main:/collections#collection_manager", "load", {collection = "level_1"})
-		msg.post(".", "release_input_focus")
+		msg.post("main:/collections#collection_manager", "load", {collection = "song_selection"})
+		-- save
+		
 	end
 end
 

@@ -10,11 +10,11 @@ SONG_LENGTH = 0.0 + OFFSET
 PERFECT_THRESHOLD = 0.1  -- 100 milliseconds around the beat
 GOOD_THRESHOLD = 0.2     -- 200 milliseconds around the beat
 
+BEAT_SUBSCRIBERS = {}
+
 local next_beat_time = 0
 local last_beat_time = 0
 local last_position = 0
-
-local beat_subscribers = {}
 
 function self.play_music(event_name, fade_time)
     if not fade_time then fade_time = 0.5 end
@@ -105,12 +105,8 @@ end
 
 function self.on_beat()
     -- print("SONG_POSITION: " .. SONG_POSITION .. " On Beat!")
-    for url, _ in pairs(beat_subscribers) do
-        if url then  -- Check if the URL points to a valid object
-            msg.post(url, "beat")
-        else
-            self.unsubscribe(url)  -- Automatically unsubscribe invalid URLs
-        end
+    for i, v in ipairs(BEAT_SUBSCRIBERS) do
+        msg.post(v, "beat")
     end
 end
 
@@ -144,15 +140,25 @@ function self.rate_player_action(time_diff)
 end
 
 function self.subscribe(url)
-    beat_subscribers[url] = true
+    print ("subscribing to " .. url)
+    table.insert(BEAT_SUBSCRIBERS, url)
 end
 
 function self.unsubscribe(url)
-    beat_subscribers[url] = nil
+print ("unsubscribing to " .. url)
+    -- get index of url
+    for i, v in ipairs(BEAT_SUBSCRIBERS) do
+        if v == url then
+            table.remove(BEAT_SUBSCRIBERS, i)
+            break
+        end
+    end
+
+    print(BEAT_SUBSCRIBERS)
 end
 
 function self.unsubscribe_all()
-    beat_subscribers = {}
+    BEAT_SUBSCRIBERS = {}
 end
 
 function self.get_crotchet()

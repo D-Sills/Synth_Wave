@@ -10,11 +10,9 @@ local function fade(self, start_alpha, end_alpha, duration, callback)
 end
 
 function init(self)
-	local screen_width, screen_height = window.get_size()
 	self.gui_node = gui.get_node("fader")
-	gui.set_size(self.gui_node, vmath.vector3(screen_width, screen_height, 0))
-	gui.set_position(self.gui_node, vmath.vector3(screen_width / 2, screen_height / 2, 0))
 	self.is_fading = false
+	gui.set_render_order(15)
 end
 
 function update(self, dt)
