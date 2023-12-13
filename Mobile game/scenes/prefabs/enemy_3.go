@@ -13,8 +13,23 @@ components {
     w: 1.0
   }
   properties {
+    id: "health"
+    value: "1.0"
+    type: PROPERTY_TYPE_NUMBER
+  }
+  properties {
     id: "speed"
-    value: "30.0"
+    value: "55.0"
+    type: PROPERTY_TYPE_NUMBER
+  }
+  properties {
+    id: "rotation_speed"
+    value: "40.0"
+    type: PROPERTY_TYPE_NUMBER
+  }
+  properties {
+    id: "score_value"
+    value: "300.0"
     type: PROPERTY_TYPE_NUMBER
   }
 }
@@ -52,7 +67,7 @@ embedded_components {
   id: "sprite"
   type: "sprite"
   data: "tile_set: \"/assets/towers.atlas\"\n"
-  "default_animation: \"0\"\n"
+  "default_animation: \"14\"\n"
   "material: \"/builtins/materials/sprite.material\"\n"
   "blend_mode: BLEND_MODE_ALPHA\n"
   ""
@@ -68,8 +83,8 @@ embedded_components {
     w: 1.0
   }
   scale {
-    x: 0.25
-    y: 0.25
+    x: 0.2
+    y: 0.2
     z: 1.0
   }
 }

@@ -70,10 +70,6 @@ function on_message(self, message_id, message, sender)
 end
 
 function final(self)
-    for i, rect in ipairs(self.left_rectangles) do
-        gui.delete_node(rect)
-        gui.delete_node(self.right_rectangles[i])
-    end
     self.left_rectangles = {}
     self.right_rectangles = {}
     audio_manager.unsubscribe(msg.url())

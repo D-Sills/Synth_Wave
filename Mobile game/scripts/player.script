@@ -8,8 +8,6 @@ go.property("max_health", 3)
 go.property("shootCooldown", 0.2)
 go.property("invulnerabilityTime", 2) -- idk if needed
 
-local active_bullets = {}
-
 function init(self)
 	--msg.post("main:/camera", "follow", { target = hash("level/#player"), lerp = 0.7, horizontal = true, vertical = true, immediate = true })
 	msg.post("gui", "register")
@@ -25,7 +23,8 @@ function init(self)
 	self.is_invulnerable = false
     self.invuln_timer = 0
 	self.should_flash = false
-
+	
+	self.attack_power = 1
 end
 
 
@@ -104,12 +103,14 @@ function on_message(self, message_id, message, sender)
 			    go.delete(id) -- Delete the projectile once it reaches the target position
 			end)
 			
-			if rating == "Bad" then
+			msg.post("/gui#floating_text", "show_floating_rating", { text = rating })
 			
+			if rating == "Bad" then
+				self.attack_power_multiplier = 0.5
 			elseif rating == "Good" then 
-				
+				self.attack_power_multiplier = 1
 			elseif rating == "Perfect" then
-	
+				self.attack_power_multiplier = 1.5
 			end
 			
 			self.time_since_last_shot = self.shootCooldown
@@ -148,9 +149,12 @@ function on_message(self, message_id, message, sender)
 				self.is_invulnerable = true
 				self.invuln_timer = self.invuln_duration
 				-- Add visual or audio feedback for taking damage
+				
 			end
 		end
 	
+	elseif message_id == hash("get_damage_to_take") then
+		msg.post(sender, "take_damage", { damage = self.attack_power * self.attack_power_multiplier })
 	end
 end
 

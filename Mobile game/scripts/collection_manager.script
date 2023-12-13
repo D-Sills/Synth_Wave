@@ -1,5 +1,3 @@
-local audio_manager = require("scripts.modules.audio_manager")
-
 function init(self)
 	self.active_scene = nil
 	msg.post(".", "acquire_input_focus")

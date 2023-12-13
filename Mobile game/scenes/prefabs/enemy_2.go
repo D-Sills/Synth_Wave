@@ -13,8 +13,13 @@ components {
     w: 1.0
   }
   properties {
-    id: "speed"
-    value: "30.0"
+    id: "health"
+    value: "10.0"
+    type: PROPERTY_TYPE_NUMBER
+  }
+  properties {
+    id: "score_value"
+    value: "500.0"
     type: PROPERTY_TYPE_NUMBER
   }
 }
@@ -51,8 +56,8 @@ components {
 embedded_components {
   id: "sprite"
   type: "sprite"
-  data: "tile_set: \"/assets/towers.atlas\"\n"
-  "default_animation: \"0\"\n"
+  data: "tile_set: \"/assets/ships.atlas\"\n"
+  "default_animation: \"ShipB_02\"\n"
   "material: \"/builtins/materials/sprite.material\"\n"
   "blend_mode: BLEND_MODE_ALPHA\n"
   ""
@@ -68,8 +73,8 @@ embedded_components {
     w: 1.0
   }
   scale {
-    x: 0.25
-    y: 0.25
+    x: 0.35
+    y: 0.35
     z: 1.0
   }
 }

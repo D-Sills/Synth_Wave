@@ -1,0 +1,51 @@
+local function create_floating_text(self, position, text)
+    local new_text = gui.clone(self.text_template_score)
+    gui.set_text(new_text, text)
+
+    gui.set_position(new_text, position)
+
+    local end_pos = vmath.vector3(position.x, position.y + 50, 0) 
+    gui.animate(new_text, "position", end_pos, gui.EASING_OUTQUAD, 1.5)
+    gui.animate(new_text, "color.w", 0, gui.EASING_OUTQUAD, 1.5, 0, function()
+        gui.delete_node(new_text)
+    end)
+end
+
+local function create_floating_rating(self, text)
+    local new_text = gui.clone(self.text_template_rating)
+    gui.set_text(new_text, text)
+
+    local pos = vmath.vector3(640, 120, 0)
+    gui.set_position(new_text, pos)
+
+    if text == "Perfect" then
+        gui.set_color(new_text, vmath.vector4(0, 1, 0, 1))
+        gui.set_scale(new_text, vmath.vector3(1, 1, 1))
+    elseif text == "Good" then
+        gui.set_color(new_text, vmath.vector4(1, 1, 0, 1))
+        gui.set_scale(new_text, vmath.vector3(0.8, 0.8, 1))
+    elseif text == "Bad" then
+        gui.set_color(new_text, vmath.vector4(1, 0, 0, 1))
+        gui.set_scale(new_text, vmath.vector3(0.6, 0.6, 1))
+    end
+
+    local end_pos = vmath.vector3(pos.x, pos.y + 50, 0) 
+    gui.animate(new_text, "position", end_pos, gui.EASING_OUTQUAD, 1.5)
+    gui.animate(new_text, "color.w", 0, gui.EASING_OUTQUAD, 1.5, 0, function()
+        gui.delete_node(new_text)
+    end)
+end
+
+function init(self)
+    self.text_template_score = gui.get_node("text_template_score")
+    self.text_template_rating = gui.get_node("text_template_rating")
+end
+
+function on_message(self, message_id, message, sender)
+    if message_id == hash("show_floating_text") then
+        create_floating_text(self, message.position, message.text)
+    end
+    if message_id == hash("show_floating_rating") then
+        create_floating_rating(self, message.text)
+    end
+end

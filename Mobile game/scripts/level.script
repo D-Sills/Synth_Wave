@@ -2,18 +2,23 @@ local audio_manager = require("scripts.modules.audio_manager")
 local utils = require("scripts.modules.utils")
 
 go.property("BPM", 124)
-go.property("enemy_1_factory", hash(""))
+go.property("enemy_1_factory", hash("")) -- lazy
 go.property("enemy_2_factory", hash(""))
 go.property("enemy_3_factory", hash(""))
+
+local total_points_possible = 0
 
 local function spawn_enemy(enemy_type, position)
 	-- Spawn logic for enemies
 	if enemy_type == "1" then
 		factory.create("#enemy_1_factory", position)
+		total_points_possible = total_points_possible + 100
 	elseif enemy_type == "2" then
 		factory.create("#enemy_2_factory", position)
+		total_points_possible = total_points_possible + 500
 	elseif enemy_type == "3" then
 		factory.create("#enemy_3_factory", position)
+		total_points_possible = total_points_possible + 300
 	end
 end
 
@@ -26,6 +31,7 @@ end
 local function end_level()
 	msg.post(".", "release_input_focus")
 	msg.post("main:/game_manager#scene_fader", "fade_out", {duration = 0.5, callback = true})
+	-- save
 end
 
 local timeline = { -- surely a better way to do this? idk. i guess some sort of custom editor, but this'll do for now (O-O)-b
@@ -34,8 +40,9 @@ local timeline = { -- surely a better way to do this? idk. i guess some sort of 
 		audio_manager.BPM = 124
 	end },
 	{ time = 3, action = function() audio_manager.play_music("Music/All I Need", 0.5) end },
-	{ time = 5, action = function() spawn_enemy("1", utils.random_position()) end },
-	{ time = 45, action = function() spawn_wave("intense_enemy", 5) end },
+	{ time = 5, action = function() spawn_wave("1", 5) end },
+	{ time = 10, action = function() spawn_wave("2", 2) end },
+	{ time = 20, action = function() spawn_wave("3", 1) end },
 	-- More events...
 }
 
@@ -51,6 +58,11 @@ function init(self)
 	msg.post("main:/game_manager#scene_fader", "fade_in", {duration = 0.5, callback = true})
 	initialize_timeline(self)
 
+	self.score_label = "/labels#score"
+	self.score = 0
+
+	local s = tostring(self.score)
+	label.set_text(self.score_label, s or "")
 end
 
 function on_message(self, message_id, message, sender)
@@ -59,7 +71,12 @@ function on_message(self, message_id, message, sender)
 	end
 	if message_id == hash("fade_out_done") then
 		msg.post("main:/collections#collection_manager", "load", {collection = "song_selection"})
-		-- save
+	end
+	if message_id == hash("update_score") then
+		self.score = self.score + message.score
+		label.set_text(self.score_label, self.score)
+	end
+	if message_id == hash("update_health") then
 		
 	end
 end

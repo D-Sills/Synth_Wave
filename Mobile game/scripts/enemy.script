@@ -5,6 +5,7 @@ local utils = require("scripts.modules.utils")
 go.property("health", 3)
 go.property("speed", 10)
 go.property("rotation_speed", 20)
+go.property("score_value", 100)
 
 function init(self)
     audio_manager.subscribe(msg.url("."))
@@ -23,10 +24,22 @@ end
 
 local function die(self)
     audio_manager.unsubscribe(msg.url("."))
-    -- audio_manager.play_sound_effect("explosion_sound")
-    --local particle_path = go.get_id("explosion_particlefx")  -- Replace with your actual particle FX component ID
-    --particlefx.play(particle_path)
+    msg.post("main:/camera", "shake", { duration = 0.3, magnitude = 0.1 })
+    msg.post("/gui#floating_text", "show_floating_text", { position = go.get_position(), text = "+"..self.score_value })
+    msg.post("/manager#level", "update_score", { score = self.score_value })
+    particlefx.play("#death_explosion")
+    audio_manager.play_sound_effect("Combat/Death")
     go.delete()
+end
+
+local function take_damage(self, damage)
+    particlefx.play("#damage_explosion")
+    msg.post("main:/camera", "shake", { duration = 0.1, magnitude = 0.05 })
+    audio_manager.play_sound_effect("Combat/Death")
+    self.health = self.health - damage
+    if self.health <= 0 then
+        die(self)
+    end
 end
 
 function on_message(self, message_id, message, sender)
@@ -41,12 +54,11 @@ function on_message(self, message_id, message, sender)
             local new_pos = pos + move_dir * move_distance
             print("new pos:" .. pos.x .. "," .. pos.y)
             go.set_position(new_pos)
-        end
-        
+        end  
     elseif message_id == hash("collision_response") then
         print (message.other_id)
         -- hash needs to include the collection proxy
-        if (message.other_id == hash("/player")) then
+        if (message.group == hash("player")) then
             -- Player collision
             print ("collision player")
             msg.post(message.other_id, "take_damage", {damage = 1})
@@ -55,7 +67,11 @@ function on_message(self, message_id, message, sender)
             -- Bullet collision
             print("collision bullet")
             go.delete(message.other_id)
-            die(self)
-        end
+            
+            -- recieve the damage from the player
+            msg.post("/player#player", "get_damage_to_take")
+        end  
+    elseif message_id == hash("take_damage") then
+        take_damage(self, message.damage)
     end
 end
