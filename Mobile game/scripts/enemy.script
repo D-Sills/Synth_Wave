@@ -21,6 +21,14 @@ function update(self, dt)
     go.set_rotation(current_rotation * delta_rotation)
 end
 
+local function spawn_powerup(self)
+    local powerup_type = math.random(1, 4)
+    local powerup_position = go.get_position()
+    powerup_position.y = powerup_position.y - 20 -- should get sprite size instead / 2
+    
+    print("spawning powerup: "..powerup_type)
+    factory.create("/manager#powerup_"..powerup_type.."_factory", powerup_position)
+end
 
 local function die(self)
     audio_manager.unsubscribe(msg.url("."))
@@ -29,6 +37,13 @@ local function die(self)
     msg.post("/manager#level", "update_score", { score = self.score_value })
     particlefx.play("#death_explosion")
     audio_manager.play_sound_effect("Combat/Death")
+
+    -- random chance to spawn a powerup
+    local spawn_powerup_chance = math.random(1, 10)
+    if spawn_powerup_chance <= 10 then
+        spawn_powerup(self)
+    end
+
     go.delete()
 end
 

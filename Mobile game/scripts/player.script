@@ -17,14 +17,20 @@ function init(self)
 	print("player init")
 	self.velocity = vmath.vector3()
 	audio_manager.subscribe(msg.url())
-	
+
 	self.time_since_last_shot = 0 
-	self.hp = self.max_hp
+	self.hp = self.max_health
 	self.is_invulnerable = false
     self.invuln_timer = 0
 	self.should_flash = false
-	
+
+	self.power_up_timers = {}
 	self.attack_power = 1
+	self.is_dealing_double_damage = false
+	self.is_firing_spiral_bullets = false
+	self.is_shooting_large_bullets = false
+
+	msg.post("/gui#hud", "update", { hp = self.hp, max_hp = self.max_hp })
 end
 
 
@@ -40,34 +46,76 @@ function update(self, dt)
 		self.time_since_last_shot = self.time_since_last_shot - dt -- maybe beats but feels bad like that (OwO)-b
 	end
     
-    -- invulnerability
-	--if self.is_invulnerable then
-    --    self.invuln_timer = self.invuln_timer - dt
-    --    if self.invuln_timer <= 0 then
-    --        self.is_invulnerable = false
-    --    end
-    --end
+    if self.should_flash then
+		-- Alternate the tint color for flashing
+		local current_tint = go.get("#base", "tint")
+		local new_tint = current_tint.w == 1 and vmath.vector4(1, 0, 0, 0.5) or vmath.vector4(1, 1, 1, 1)
+		go.set("#base", "tint", new_tint)
+	end
+end
+
+local function fire_bullet(self, spawn_position, forward_vector, weapon_rotation_quat)
+    local id = factory.create("#laserfactory", spawn_position, weapon_rotation_quat)
+	print (id .. " is the id")
+    -- Adjust projectile based on power-ups
+    if self.is_shooting_large_bullets then
+        -- Increase the size of the bullet
+        go.set_scale(vmath.vector3(2.5, 2.5, 1), id)
+    end
+
+	-- tiny red when double damage
+	if self.is_dealing_double_damage then
+		-- Change the color of the bullet
+		go.set(id, "tint", vmath.vector4(1, 0, 0, 1))
+	end
+
+	self.attack_power = self.is_dealing_double_damage and 2 or 1
+
+    -- Projectile movement logic
+    local projectile_speed = 500  -- Adjust as needed
+    local move_distance = 1500
+    local target_position = spawn_position + forward_vector * move_distance
+    local travel_time = move_distance / projectile_speed
+
+	audio_manager.play_sound_effect("Combat/laserSmall")
+	
+    go.animate(id, "position", go.PLAYBACK_ONCE_FORWARD, target_position, go.EASING_LINEAR, travel_time, 0, function()
+        go.delete(id)
+    end)
+end
+
+local function die(self) 
+	
+	
 end
 
 function on_message(self, message_id, message, sender)
 	if message_id == hash("beat") then
         if self.is_invulnerable then
-            if self.invuln_beats_left > 0 then
-                self.invuln_beats_left = self.invuln_beats_left - 1
+            if self.invulnerabilityTime > 0 then
+                self.invulnerabilityTime = self.invulnerabilityTime - 1
             end
 
-            if self.invuln_beats_left <= 0 then
+            if self.invulnerabilityTime <= 0 then
                 self.is_invulnerable = false
                 self.should_flash = false
-                go.set(".", "tint", vmath.vector4(1, 1, 1, 1))  -- Reset to normal color
+               -- go.set(".", "tint", vmath.vector4(1, 1, 1, 1))  -- Reset to normal color
             end
         end
 
-        if self.should_flash then
-            -- Alternate the tint color for flashing
-            local current_tint = go.get(".", "tint")
-            local new_tint = current_tint.w == 1 and vmath.vector4(1, 0, 0, 0.5) or vmath.vector4(1, 1, 1, 1)
-            go.set(".", "tint", new_tint)
+		for power_up_type, duration in pairs(self.power_up_timers) do
+			self.power_up_timers[power_up_type] = duration - 1
+			if self.power_up_timers[power_up_type] <= 0 then
+				self.power_up_timers[power_up_type] = nil
+				-- Reset the effect
+				if power_up_type == "large_shots" then
+					self.is_shooting_large_bullets = false
+				elseif power_up_type == "double_damage" then
+					self.is_dealing_double_damage = false
+				elseif power_up_type == "spiral_bullets" then
+					self.is_firing_spiral_bullets = false
+				end
+			end
 		end
 	elseif message_id == hash("onscreen_button") and message.id == hash("shoot_button") and message.released then
 		if self.time_since_last_shot <= 0 then
@@ -83,25 +131,29 @@ function on_message(self, message_id, message, sender)
 			local forward_vector = vmath.rotate(weapon_rotation_quat, base_forward_vector)
 			
 			-- Define the offset distance in front of the player where the projectile will spawn
-			local offset_distance = 50
+			local offset_distance = 30
 			-- Make sure to get the weapon's world position if the weapon sprite is a separate game object
 			local weapon_position = go.get_world_position("/weapon#weapon")
 			local spawn_position = weapon_position + forward_vector * offset_distance
 			
-			-- Create the laser projectile from the factory
-			local id = factory.create("#laserfactory", spawn_position, weapon_rotation_quat)
-			
-			-- Projectile movement logic
-			local projectile_speed = 500 -- Adjust the speed as needed
-			local move_distance = 1500 -- Adjust based on how far you want the projectile to go
-			local target_position = spawn_position + forward_vector * move_distance
-			local travel_time = move_distance / projectile_speed
-			
-			audio_manager.play_sound_effect("Combat/LaserSmall")
-			
-			go.animate(id, "position", go.PLAYBACK_ONCE_FORWARD, target_position, go.EASING_LINEAR, travel_time, 0, function()
-			    go.delete(id) -- Delete the projectile once it reaches the target position
-			end)
+			if self.time_since_last_shot <= 0 then
+				
+				if self.is_firing_spiral_bullets then
+						-- fire 3 bullets in a spread like a shotgun
+						local spread_angle = math.rad(20)
+						local left_bullet_angle = math.atan2(forward_vector.y, forward_vector.x) - spread_angle
+						local right_bullet_angle = math.atan2(forward_vector.y, forward_vector.x) + spread_angle
+						local left_bullet_direction = vmath.quat_rotation_z(left_bullet_angle)
+						local right_bullet_direction = vmath.quat_rotation_z(right_bullet_angle)
+						fire_bullet(self, spawn_position, vmath.rotate(left_bullet_direction, forward_vector), weapon_rotation_quat)
+						fire_bullet(self, spawn_position, forward_vector, weapon_rotation_quat)
+						fire_bullet(self, spawn_position, vmath.rotate(right_bullet_direction, forward_vector), weapon_rotation_quat)
+						
+					
+				else
+				-- Fire a single bullet
+				fire_bullet(self, spawn_position, forward_vector, weapon_rotation_quat)
+			end
 			
 			msg.post("/gui#floating_text", "show_floating_rating", { text = rating })
 			
@@ -114,44 +166,54 @@ function on_message(self, message_id, message, sender)
 			end
 			
 			self.time_since_last_shot = self.shootCooldown
-		else
-			print("Can't shoot yet, cooldown active!")
-		end
-		
---[[ 	elseif message_id == hash("onscreen_analog") and message.id == hash("analog") then
-		-- handle movement
-		print ("analogL")
-		if message.released then
-			self.velocity.x = 0
-			self.velocity.y = 0
-		else
-			self.velocity.x = message.x * self.movementSpeed
-			self.velocity.y = message.y * self.movementSpeed
-		end ]]
+	        else
+			end
+        end
 	elseif message_id == hash("onscreen_analog") and message.id == hash("analog") then
 		-- Handle instant turning
-
-            -- Calculate the angle based on the right analog stick input
         local angle = math.atan2(message.y, message.x) - math.pi / 2
         local target_rotation = vmath.quat_rotation_z(angle)
-        go.set_rotation(target_rotation, "/weapon#weapon") 
-        
-        
+        go.set_rotation(target_rotation, "/weapon#weapon")
 	elseif message_id == hash("take_damage") then
 		if not self.is_invulnerable then
 			self.hp = self.hp - message.damage
-			
+			msg.post("/gui#hud", "update_health", { health = self.hp, max_health = self.max_health })
 			if self.hp <= 0 then
 				-- Handle player death (e.g., end game, restart level)
-				go.delete()
+				die(self)
 			else
 				-- Begin invulnerability period
 				self.is_invulnerable = true
-				self.invuln_timer = self.invuln_duration
+				self.invuln_timer = self.invulnerabilityTime
 				-- Add visual or audio feedback for taking damage
+				self.should_flash = true
+		
 				
 			end
 		end
+	elseif message_id == hash("power_up_collected") then
+		if message.type == 1 then
+			self.hp = self.hp + 1
+			msg.post("/gui#hud", "update_health", { health = self.hp, max_health = self.max_health })
+			msg.post("/gui#floating_text", "show_floating_text", { position = go.get_position() + vmath.vector3(0,40,0), text = "+1 HP" })
+        elseif message.type == 2 then
+            self.is_shooting_large_bullets = true
+            self.power_up_timers["large_shots"] = 10  -- 10 beats of larger shots
+            msg.post("/gui#floating_text", "show_floating_text", { position = go.get_position() + vmath.vector3(0,40,0), text = "Large Shots" })
+        elseif message.type == 3 then
+            self.is_dealing_double_damage = true
+            self.power_up_timers["double_damage"] = 10  -- 10 beats of double damage
+            msg.post("/gui#floating_text", "show_floating_text", { position = go.get_position() + vmath.vector3(0,40,0), text = "Double Damage" })
+        elseif message.type == 4 then
+            self.is_firing_spiral_bullets = true
+            self.power_up_timers["spiral_bullets"] = 10  -- 10 beats of spiral bullets
+            msg.post("/gui#floating_text", "show_floating_text", { position = go.get_position() + vmath.vector3(0,40,0), text = "Spiral Bullets" })
+        end
+		
+		
+
+		--particlefx.play("#death_explosion")
+		--audio_manager.play_sound_effect("Combat/Death")
 	
 	elseif message_id == hash("get_damage_to_take") then
 		msg.post(sender, "take_damage", { damage = self.attack_power * self.attack_power_multiplier })

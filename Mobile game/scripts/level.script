@@ -40,8 +40,8 @@ local timeline = { -- surely a better way to do this? idk. i guess some sort of 
 		audio_manager.BPM = 124
 	end },
 	{ time = 3, action = function() audio_manager.play_music("Music/All I Need", 0.5) end },
-	{ time = 5, action = function() spawn_wave("1", 5) end },
-	{ time = 10, action = function() spawn_wave("2", 2) end },
+	{ time = 5, action = function() spawn_wave("1", 2) end },
+	{ time = 15, action = function() spawn_wave("2", 2) end },
 	{ time = 20, action = function() spawn_wave("3", 1) end },
 	-- More events...
 }

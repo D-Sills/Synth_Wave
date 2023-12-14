@@ -1,0 +1,27 @@
+local audio_manager = require("scripts.modules.audio_manager")
+local utils = require("scripts.modules.utils")
+
+go.property("type", 1)
+
+function init(self)
+    self.screen_width = utils.get_screen_size().width
+    self.screen_height = utils.get_screen_size().height
+    self.target_pos = vmath.vector3(self.screen_width / 2, self.screen_height / 2 + 30, 0)
+end
+
+function update(self, dt)
+    local pos = go.get_position()
+    local dir = vmath.normalize(self.target_pos - pos)
+    local speed = 100
+    go.set_position(pos + dir * speed * dt)
+end
+
+function on_message(self, message_id, message, sender)
+    if message_id == hash("collision_response") and message.other_id == hash("/player") then
+        msg.post("/player#player", "power_up_collected", {type = self.type})
+        
+        -- Optionally play a sound effect or visual effect
+
+        go.delete()
+    end
+end

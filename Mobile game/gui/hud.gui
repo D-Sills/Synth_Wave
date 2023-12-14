@@ -730,7 +730,7 @@ nodes {
 }
 nodes {
   position {
-    x: 222.0
+    x: 229.0
     y: -76.0
     z: 0.0
     w: 1.0
@@ -801,8 +801,8 @@ nodes {
     w: 1.0
   }
   scale {
-    x: 0.1
-    y: 0.1
+    x: 0.3
+    y: 0.3
     z: 1.0
     w: 1.0
   }
@@ -820,7 +820,7 @@ nodes {
   }
   type: TYPE_BOX
   blend_mode: BLEND_MODE_ALPHA
-  texture: "ui/heart"
+  texture: "ui/heart_full"
   id: "heart1"
   xanchor: XANCHOR_NONE
   yanchor: YANCHOR_NONE
@@ -860,8 +860,8 @@ nodes {
     w: 1.0
   }
   scale {
-    x: 0.1
-    y: 0.1
+    x: 0.3
+    y: 0.3
     z: 1.0
     w: 1.0
   }
@@ -879,7 +879,7 @@ nodes {
   }
   type: TYPE_BOX
   blend_mode: BLEND_MODE_ALPHA
-  texture: "ui/heart"
+  texture: "ui/heart_full"
   id: "heart2"
   xanchor: XANCHOR_NONE
   yanchor: YANCHOR_NONE
@@ -919,8 +919,8 @@ nodes {
     w: 1.0
   }
   scale {
-    x: 0.1
-    y: 0.1
+    x: 0.3
+    y: 0.3
     z: 1.0
     w: 1.0
   }
@@ -938,7 +938,7 @@ nodes {
   }
   type: TYPE_BOX
   blend_mode: BLEND_MODE_ALPHA
-  texture: "ui/heart"
+  texture: "ui/heart_full"
   id: "heart3"
   xanchor: XANCHOR_NONE
   yanchor: YANCHOR_NONE
