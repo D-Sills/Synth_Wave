@@ -11,11 +11,9 @@ end
 
 local function pulse_bar(node, direction)
     local initial_size = gui.get_size(node)
-    local pulse_size = vmath.vector3(initial_size.x * 1.5, initial_size.y, initial_size.z) -- Increase width by 50%
+    local pulse_size = vmath.vector3(initial_size.x * 1.5, initial_size.y, initial_size.z)
 
-    -- Pulse out
     gui.animate(node, "size", pulse_size, gui.EASING_OUTQUAD, 0.1, 0, function()
-        -- Pulse back to initial size
         gui.animate(node, "size", initial_size, gui.EASING_INQUAD, 0.1)
     end)
 end

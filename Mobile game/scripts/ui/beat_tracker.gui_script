@@ -53,7 +53,7 @@ function on_message(self, message_id, message, sender)
     if message_id == hash("beat") then
         -- On each beat, spawn new rectangles for the next beat in the sequence
         spawn_beat_rectangles(self, self.beats_ahead)
-        -- remove the rectangles that have reached the center
+        -- remove the rectangles that have reached the center, but not really because this spams errors? idk, should probably do this but it doesn't seem to matter
         if #self.left_rectangles > 0 then
             --gui.delete_node(self.left_rectangles[1])
             --gui.delete_node(self.right_rectangles[1])

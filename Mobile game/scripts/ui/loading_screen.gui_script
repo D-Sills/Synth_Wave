@@ -6,7 +6,7 @@ function init(self)
     self.loading_text = "Loading"
     self.dot_count = 0
     self.dot_timer = 0
-    self.dot_interval = 0.5
+    self.dot_interval = 0.2
 
 	msg.post("main:/game_manager#scene_fader", "fade_in", {duration = 0.2, callback = true})
 end
@@ -28,10 +28,9 @@ end
 
 function update(self, dt)
 	if self.load_duration then
-        local alpha = 1 - math.abs(math.sin(self.load_duration * 5)) -- Flashing effect
-        gui.set_color(self.gui_node, vmath.vector4(1, 1, 1, alpha))
+        
 
-
+		-- loading... loading.. etc pretty boring
 	    self.dot_timer = self.dot_timer + dt
 	    if self.dot_timer > self.dot_interval then
 	        self.dot_timer = 0

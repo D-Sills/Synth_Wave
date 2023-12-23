@@ -229,7 +229,7 @@ nodes {
     w: 1.0
   }
   type: TYPE_TEMPLATE
-  id: "song1"
+  id: "all_i_need"
   parent: "songs"
   layer: "0"
   inherit_alpha: true
@@ -273,12 +273,12 @@ nodes {
   type: TYPE_BOX
   blend_mode: BLEND_MODE_ALPHA
   texture: "ui/glassPanel"
-  id: "song1/panel"
+  id: "all_i_need/panel"
   xanchor: XANCHOR_NONE
   yanchor: YANCHOR_NONE
   pivot: PIVOT_CENTER
   adjust_mode: ADJUST_MODE_STRETCH
-  parent: "song1"
+  parent: "all_i_need"
   layer: ""
   inherit_alpha: true
   slice9 {
@@ -332,12 +332,12 @@ nodes {
   type: TYPE_BOX
   blend_mode: BLEND_MODE_ALPHA
   texture: "ui/synthing for the weekend"
-  id: "song1/cover"
+  id: "all_i_need/cover"
   xanchor: XANCHOR_NONE
   yanchor: YANCHOR_NONE
   pivot: PIVOT_CENTER
   adjust_mode: ADJUST_MODE_STRETCH
-  parent: "song1/panel"
+  parent: "all_i_need/panel"
   layer: ""
   inherit_alpha: true
   slice9 {
@@ -392,7 +392,7 @@ nodes {
   blend_mode: BLEND_MODE_ALPHA
   text: "Best Rank -"
   font: "Kenney Future"
-  id: "song1/rank"
+  id: "all_i_need/rank"
   xanchor: XANCHOR_NONE
   yanchor: YANCHOR_NONE
   pivot: PIVOT_CENTER
@@ -410,7 +410,7 @@ nodes {
   }
   adjust_mode: ADJUST_MODE_STRETCH
   line_break: false
-  parent: "song1/panel"
+  parent: "all_i_need/panel"
   layer: ""
   inherit_alpha: true
   alpha: 1.0
@@ -461,7 +461,7 @@ nodes {
   text: "All I Needed To Know\n"
   "Ash Green"
   font: "Kenney Space"
-  id: "song1/song_name"
+  id: "all_i_need/song_name"
   xanchor: XANCHOR_NONE
   yanchor: YANCHOR_NONE
   pivot: PIVOT_CENTER
@@ -479,7 +479,7 @@ nodes {
   }
   adjust_mode: ADJUST_MODE_STRETCH
   line_break: false
-  parent: "song1/panel"
+  parent: "all_i_need/panel"
   layer: ""
   inherit_alpha: true
   alpha: 1.0
@@ -528,7 +528,7 @@ nodes {
   blend_mode: BLEND_MODE_ALPHA
   text: "Cleared --,-- %"
   font: "Kenney Future"
-  id: "song1/clear"
+  id: "all_i_need/clear"
   xanchor: XANCHOR_NONE
   yanchor: YANCHOR_NONE
   pivot: PIVOT_CENTER
@@ -546,7 +546,7 @@ nodes {
   }
   adjust_mode: ADJUST_MODE_STRETCH
   line_break: false
-  parent: "song1/panel"
+  parent: "all_i_need/panel"
   layer: ""
   inherit_alpha: true
   alpha: 1.0
@@ -592,7 +592,7 @@ nodes {
     w: 1.0
   }
   type: TYPE_TEMPLATE
-  id: "song2"
+  id: "solf_millenium"
   parent: "songs"
   layer: "1"
   inherit_alpha: true
@@ -636,12 +636,12 @@ nodes {
   type: TYPE_BOX
   blend_mode: BLEND_MODE_ALPHA
   texture: "ui/glassPanel"
-  id: "song2/panel"
+  id: "solf_millenium/panel"
   xanchor: XANCHOR_NONE
   yanchor: YANCHOR_NONE
   pivot: PIVOT_CENTER
   adjust_mode: ADJUST_MODE_STRETCH
-  parent: "song2"
+  parent: "solf_millenium"
   layer: ""
   inherit_alpha: true
   slice9 {
@@ -695,12 +695,12 @@ nodes {
   type: TYPE_BOX
   blend_mode: BLEND_MODE_ALPHA
   texture: "ui/cover"
-  id: "song2/cover"
+  id: "solf_millenium/cover"
   xanchor: XANCHOR_NONE
   yanchor: YANCHOR_NONE
   pivot: PIVOT_CENTER
   adjust_mode: ADJUST_MODE_STRETCH
-  parent: "song2/panel"
+  parent: "solf_millenium/panel"
   layer: ""
   inherit_alpha: true
   slice9 {
@@ -756,7 +756,7 @@ nodes {
   blend_mode: BLEND_MODE_ALPHA
   text: "Best Rank -"
   font: "Kenney Future"
-  id: "song2/rank"
+  id: "solf_millenium/rank"
   xanchor: XANCHOR_NONE
   yanchor: YANCHOR_NONE
   pivot: PIVOT_CENTER
@@ -774,7 +774,7 @@ nodes {
   }
   adjust_mode: ADJUST_MODE_STRETCH
   line_break: false
-  parent: "song2/panel"
+  parent: "solf_millenium/panel"
   layer: ""
   inherit_alpha: true
   alpha: 1.0
@@ -824,7 +824,7 @@ nodes {
   text: "Soft Millenium\n"
   "3D63"
   font: "Kenney Space"
-  id: "song2/song_name"
+  id: "solf_millenium/song_name"
   xanchor: XANCHOR_NONE
   yanchor: YANCHOR_NONE
   pivot: PIVOT_CENTER
@@ -842,7 +842,7 @@ nodes {
   }
   adjust_mode: ADJUST_MODE_STRETCH
   line_break: false
-  parent: "song2/panel"
+  parent: "solf_millenium/panel"
   layer: ""
   inherit_alpha: true
   alpha: 1.0
@@ -892,7 +892,7 @@ nodes {
   blend_mode: BLEND_MODE_ALPHA
   text: "Cleared --,-- %"
   font: "Kenney Future"
-  id: "song2/clear"
+  id: "solf_millenium/clear"
   xanchor: XANCHOR_NONE
   yanchor: YANCHOR_NONE
   pivot: PIVOT_CENTER
@@ -910,7 +910,7 @@ nodes {
   }
   adjust_mode: ADJUST_MODE_STRETCH
   line_break: false
-  parent: "song2/panel"
+  parent: "solf_millenium/panel"
   layer: ""
   inherit_alpha: true
   alpha: 1.0
@@ -956,7 +956,7 @@ nodes {
     w: 1.0
   }
   type: TYPE_TEMPLATE
-  id: "song3"
+  id: "high_rise"
   parent: "songs"
   layer: "1"
   inherit_alpha: true
@@ -1000,12 +1000,12 @@ nodes {
   type: TYPE_BOX
   blend_mode: BLEND_MODE_ALPHA
   texture: "ui/glassPanel"
-  id: "song3/panel"
+  id: "high_rise/panel"
   xanchor: XANCHOR_NONE
   yanchor: YANCHOR_NONE
   pivot: PIVOT_CENTER
   adjust_mode: ADJUST_MODE_STRETCH
-  parent: "song3"
+  parent: "high_rise"
   layer: ""
   inherit_alpha: true
   slice9 {
@@ -1059,12 +1059,12 @@ nodes {
   type: TYPE_BOX
   blend_mode: BLEND_MODE_ALPHA
   texture: "ui/replay in neon"
-  id: "song3/cover"
+  id: "high_rise/cover"
   xanchor: XANCHOR_NONE
   yanchor: YANCHOR_NONE
   pivot: PIVOT_CENTER
   adjust_mode: ADJUST_MODE_STRETCH
-  parent: "song3/panel"
+  parent: "high_rise/panel"
   layer: ""
   inherit_alpha: true
   slice9 {
@@ -1120,7 +1120,7 @@ nodes {
   blend_mode: BLEND_MODE_ALPHA
   text: "Best Rank -"
   font: "Kenney Future"
-  id: "song3/rank"
+  id: "high_rise/rank"
   xanchor: XANCHOR_NONE
   yanchor: YANCHOR_NONE
   pivot: PIVOT_CENTER
@@ -1138,7 +1138,7 @@ nodes {
   }
   adjust_mode: ADJUST_MODE_STRETCH
   line_break: false
-  parent: "song3/panel"
+  parent: "high_rise/panel"
   layer: ""
   inherit_alpha: true
   alpha: 1.0
@@ -1188,7 +1188,7 @@ nodes {
   text: "High Rise Cocktail\n"
   "Ash Green"
   font: "Kenney Space"
-  id: "song3/song_name"
+  id: "high_rise/song_name"
   xanchor: XANCHOR_NONE
   yanchor: YANCHOR_NONE
   pivot: PIVOT_CENTER
@@ -1206,7 +1206,7 @@ nodes {
   }
   adjust_mode: ADJUST_MODE_STRETCH
   line_break: false
-  parent: "song3/panel"
+  parent: "high_rise/panel"
   layer: ""
   inherit_alpha: true
   alpha: 1.0
@@ -1256,7 +1256,7 @@ nodes {
   blend_mode: BLEND_MODE_ALPHA
   text: "Cleared --,-- %"
   font: "Kenney Future"
-  id: "song3/clear"
+  id: "high_rise/clear"
   xanchor: XANCHOR_NONE
   yanchor: YANCHOR_NONE
   pivot: PIVOT_CENTER
@@ -1274,7 +1274,7 @@ nodes {
   }
   adjust_mode: ADJUST_MODE_STRETCH
   line_break: false
-  parent: "song3/panel"
+  parent: "high_rise/panel"
   layer: ""
   inherit_alpha: true
   alpha: 1.0
@@ -1482,7 +1482,7 @@ nodes {
   type: TYPE_BOX
   blend_mode: BLEND_MODE_ALPHA
   texture: "ui/exitLeft"
-  id: "back/box"
+  id: "back/box1"
   xanchor: XANCHOR_NONE
   yanchor: YANCHOR_NONE
   pivot: PIVOT_CENTER
@@ -1500,7 +1500,9 @@ nodes {
   clipping_visible: true
   clipping_inverted: false
   alpha: 1.0
+  overridden_fields: 4
   overridden_fields: 9
+  overridden_fields: 38
   template_node_child: true
   size_mode: SIZE_MODE_MANUAL
   custom_type: 0
@@ -1643,7 +1645,7 @@ nodes {
   type: TYPE_BOX
   blend_mode: BLEND_MODE_ALPHA
   texture: "ui/forward"
-  id: "play/box"
+  id: "play/box1"
   xanchor: XANCHOR_NONE
   yanchor: YANCHOR_NONE
   pivot: PIVOT_CENTER
@@ -1661,7 +1663,9 @@ nodes {
   clipping_visible: true
   clipping_inverted: false
   alpha: 1.0
+  overridden_fields: 4
   overridden_fields: 9
+  overridden_fields: 38
   template_node_child: true
   size_mode: SIZE_MODE_MANUAL
   custom_type: 0

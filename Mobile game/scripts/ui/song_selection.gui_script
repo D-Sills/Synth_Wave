@@ -1,15 +1,15 @@
 local audio_manager = require("scripts.modules.audio_manager")
 
-local chosen_song = "level_1"
+local chosen_song = "all_i_need"
 
 function init(self)
-
+    audio_manager.play_music("Music/TitleSong", "0.5")
 	msg.post("main:/game_manager#scene_fader", "fade_in", {duration = 0.5, callback = true})
 	msg.post("main:/game_manager#game_manager", "get_high_scores")
-	self.song_cards = {
-        {node = gui.get_node("song1/panel"), song = "song1"},
-        {node = gui.get_node("song2/panel"), song = "song2"},
-        {node = gui.get_node("song3/panel"), song = "song3"}
+	self.song_cards = { -- should use json or soemthing to store songs and references like this but this is small scale so it'll do
+        {node = gui.get_node("all_i_need/panel"), song = "all_i_need"},
+        {node = gui.get_node("solf_millenium/panel"), song = "solf_millenium"},
+        {node = gui.get_node("high_rise/panel"), song = "high_rise"},
     }
 
     self.play_button = gui.get_node("play/button")
@@ -19,12 +19,11 @@ function init(self)
     self.default_button_scale = gui.get_scale(self.play_button)
     self.button_hover_scale = vmath.vector3(0.35, 0.35, 1)
 
-    -- Set the scale of the first song as selected by default
     gui.set_scale(self.song_cards[1].node, self.song_hover_scale)
     for i = 2, #self.song_cards do
         gui.set_scale(self.song_cards[i].node, self.default_song_scale)
     end
-    --audio_manager.play_sound_effect("Voice/Welcome")
+    --audio_manager.play_sound_effect("Voice/Choose")
 end
 
 local function update_song_cards(self, high_scores)
@@ -32,16 +31,16 @@ local function update_song_cards(self, high_scores)
         local song_data = high_scores[card.song]
 
         --local score_node = gui.get_node(card.song .. "_score")
-        local rank_node = gui.get_node(card.song .. "_rank")
-        local clear_node = gui.get_node(card.song .. "_clear")
+        local rank_node = gui.get_node(card.song .. "/rank")
+        local clear_node = gui.get_node(card.song .. "/clear")
 
         --local score_text = song_data and tostring(song_data.score) or "--"
         local rank_text = song_data and song_data.rank or "--"
         local clear_text = song_data and string.format("%.2f%%", song_data.clear_percentage) or "--,--%"
 
         --gui.set_text(score_node, "Score: " .. score_text)
-        gui.set_text(rank_node, "Rank: " .. rank_text)
-        gui.set_text(clear_node, "Clear: " .. clear_text)
+        gui.set_text(rank_node, "Best Rank " .. rank_text)
+        gui.set_text(clear_node, "Cleared " .. clear_text)
     end
 end
 
@@ -49,7 +48,6 @@ end
 function on_message(self, message_id, message, sender)
 	if message_id == hash("fade_in_done") then
 		msg.post(".", "acquire_input_focus")
-
 	end
 	if message_id == hash("fade_out_done") then
 		msg.post("main:/collections#collection_manager", "load", {collection = chosen_song})
@@ -75,11 +73,9 @@ function on_input(self, action_id, action)
                 audio_manager.play_sound_effect("UI/Okay")
                 chosen_song = card.song
 
-                -- Play the music preview for the selected song
                 local music_preview = "Music/" .. card.song
                 audio_manager.play_music(music_preview, 0.1)
 
-                -- Update scales for song cards
                 for j, other_card in ipairs(self.song_cards) do
                     local scale = (i == j) and self.song_hover_scale or self.default_song_scale
                     gui.set_scale(other_card.node, scale)
@@ -90,35 +86,27 @@ function on_input(self, action_id, action)
     end
     if gui.pick_node(self.play_button, action.x, action.y) then
         if action.pressed and (action_id == hash("click") or action_id == hash("touch")) then
-            -- Play click sound
             audio_manager.play_sound_effect("UI/Okay")
-            
-            -- Trigger button action
             start_game()
-
-            -- Scale back to default when clicked
+            
             gui.set_scale(self.play_button, self.button_hover_scale)
         elseif action.released then
-            -- Scale up for hover effect
             gui.set_scale(self.play_button, self.default_button_scale)
+            msg.post('.', "release_input_focus")
         end
     end
     if gui.pick_node(self.exit_button, action.x, action.y) then
         if action.pressed and (action_id == hash("click") or action_id == hash("touch")) then
-            -- Play click sound
             audio_manager.play_sound_effect("UI/Okay")
-            
-            msg.post('.', "release_input_focus")
-            -- Trigger button action
+
             msg.post("main:/game_manager#scene_fader", "fade_out", {duration = 0.5, callback = true})
-            
+  
             chosen_song = "main_menu" -- i'm lazy (O-O)-b
-            
-            -- Scale back to default when clicked
+
             gui.set_scale(self.exit_button, self.button_hover_scale)
         elseif action.released then
-            -- Scale up for hover effect
             gui.set_scale(self.exit_button, self.default_button_scale)
+            msg.post('.', "release_input_focus")
         end
     end
 end

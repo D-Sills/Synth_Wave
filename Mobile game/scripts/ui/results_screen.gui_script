@@ -1,41 +1,157 @@
+local audio_manager = require("scripts.modules.audio_manager")
+
 function init(self)
-	-- Add initialization code here
-	-- Learn more: https://defold.com/manuals/script/
-	-- Remove this function if not needed
+	-- scoring
+	self.score = 0
+	self.score_text = gui.get_node("score_text")
+	self.rank = ""
+	self.rank_text = gui.get_node("rank_text")
+	self.time = ""
+	self.time_text = gui.get_node("time_text")
+	self.accurary = ""
+	self.accurary_text = gui.get_node("accuracy_text")
+
+	-- bbuttons
+	self.retry_button = gui.get_node("retry_button")
+	self.exit_button = gui.get_node("exit_button")
+	self.default_scale = gui.get_scale(self.retry_button)
+	self.hover_scale = vmath.vector3(1.1, 1.1, 1)
+
+	gui.set_render_order(15) -- will always render on top of everything else
+
+	self.ui_root = gui.get_node("root")
+	gui.set_enabled(self.ui_root, false)
 end
 
-function final(self)
-	-- Add finalization code here
-	-- Learn more: https://defold.com/manuals/script/
-	-- Remove this function if not needed
+local function animate_xp_fill(self, start_xp, end_xp, level, callback)
+    local xp_fill = gui.get_node("bar_f")
+    local xp_text = gui.get_node("xp")
+    local level_text = gui.get_node("level")
+
+    gui.set_text(level_text, level)
+    gui.set_text(xp_text, start_xp .. " | 100")
+
+    local xp_fill_size = gui.get_size(xp_fill)
+    local start_width = xp_fill_size.x * (start_xp / 100)
+    local end_width = xp_fill_size.x * (end_xp / 100)
+
+    -- Animate XP Fill
+    gui.animate(xp_fill, "size.x", end_width, gui.EASING_LINEAR, 1, 0, function()
+        if callback then
+            callback(self)
+        end
+    end)
+
+    -- Animate XP Text
+    for i = start_xp, end_xp do
+        timer.delay((i - start_xp) / 100 * 1, false, function()
+            gui.set_text(xp_text, tostring(i) .. "%")
+        end)
+    end
 end
 
-function update(self, dt)
-	-- Add update code here
-	-- Learn more: https://defold.com/manuals/script/
-	-- Remove this function if not needed
+
+local function animate_xp(self, start_xp, start_level)
+	self.xp_fill = gui.get_node("bar_f")
+    self.xp_text = gui.get_node("xp")
+    self.level_text = gui.get_node("level")
+
+    local end_xp = start_xp + self.xp_gain
+    local level_up = end_xp >= 100
+    local surplus_xp = level_up and (end_xp - 100) or end_xp
+
+	local function on_level_up()
+        start_level = start_level + 1
+        -- ftart next animation from 0 to surplus XP
+        animate_xp_fill(self, 0, surplus_xp, start_level, nil)
+    end
+
+    if level_up then
+        animate_xp_fill(self, start_xp, 100, start_level, on_level_up)
+    else
+        animate_xp_fill(self, start_xp, end_xp, start_level, nil)
+    end
+
+	-- save
+    msg.post("main:/game_manager#game_manager", "add_xp", {amount = self.xp_gain})
+end
+
+local function set_values(self, score, rank, time, accurary, xp_gain, current_level)
+	self.current_level = current_level
+
+	gui.set_text(self.score_text, score)
+	gui.set_text(self.accurary_text, accurary .. " %")
+	
+	if rank == "S" then
+		gui.set_color(self.rank_text, vmath.vector4(0, 1, 0, 1))
+	elseif rank == "A" then
+		gui.set_color(self.rank_text, vmath.vector4(0, 0.8, 0, 1))
+	elseif rank == "B" then
+		gui.set_color(self.rank_text, vmath.vector4(0, 0.6, 0, 1))
+	elseif rank == "C" then
+		gui.set_color(self.rank_text, vmath.vector4(0, 0.4, 0, 1))
+	elseif rank == "D" then
+		gui.set_color(self.rank_text, vmath.vector4(0, 0.2, 0, 1))
+	elseif rank == "F" then
+		gui.set_color(self.rank_text, vmath.vector4(0, 0, 0, 1))
+	end
+	gui.set_text(self.rank_text, rank)
+
+	-- format time
+	local minutes = math.floor(time / 60)
+	local seconds = math.floor(time % 60)
+	local time_string = string.format("%02d:%02d", minutes, seconds)
+	gui.set_text(self.time_text, time_string .. " / " .. "03:00")
+	
+	self.xp_gain = xp_gain
 end
 
 function on_message(self, message_id, message, sender)
-	-- Add message-handling code here
-	-- Learn more: https://defold.com/manuals/message-passing/
-	-- Remove this function if not needed
+	if message_id == hash("show_ui") then
+		gui.set_enabled(self.ui_root, true)
+		set_values(self, message.score, message.rank, message.time, message.accurary, message.xp_gain, message.current_level)
+
+		-- slide in upward
+		local start_pos = gui.get_position(self.ui_root)
+		local end_pos = vmath.vector3(start_pos.x, 360, 0)
+		
+		gui.animate(self.ui_root, "position.y", end_pos.y, gui.EASING_OUTQUAD, 1, 0, function()
+			msg.post(".", "acquire_input_focus")
+			msg.post("main:/game_manager#game_manager", "get_player_progress")
+		end)
+	end
+	if message_id == hash("fade_out_done") then
+		if self.choice == "retry" then
+			msg.post("main:/collections#collection_manager", "load", {collection = self.current_level})
+		elseif self.choice == "exit" then
+			msg.post("main:/collections#collection_manager", "load", {collection = "song_selection"})
+		end
+	end
+    if message_id == hash("load_player_progress") then
+        animate_xp(self, message.progress.xp, message.progress.level)
+    end
 end
 
 function on_input(self, action_id, action)
-	-- Add input-handling code here. The game object this script is attached to
-	-- must have acquired input focus:
-	--
-	--    msg.post(".", "acquire_input_focus")
-	--
-	-- All mapped input bindings will be received. Mouse and touch input will
-	-- be received regardless of where on the screen it happened.
-	-- Learn more: https://defold.com/manuals/input/
-	-- Remove this function if not needed
-end
-
-function on_reload(self)
-	-- Add reload-handling code here
-	-- Learn more: https://defold.com/manuals/hot-reload/
-	-- Remove this function if not needed
+	if gui.pick_node(self.retry_button, action.x, action.y) then -- retry button
+		if action.pressed and (action_id == hash("click") or action_id == hash("touch")) then
+			msg.post("main:/game_manager#scene_fader", "fade_out", {duration = 0.5, callback = true})
+			audio_manager.play_sound_effect("UI/Okay")
+			self.choice = "retry"
+			gui.set_scale(self.start_button, self.hover_scale)
+		elseif action.released then
+			gui.set_scale(self.retry_button, self.default_scale)
+			msg.post(".", "release_input_focus")
+		end
+	elseif gui.pick_node(self.exit_button, action.x, action.y) then -- exit button
+		if action.pressed and (action_id == hash("click") or action_id == hash("touch")) then
+			msg.post("main:/game_manager#scene_fader", "fade_out", {duration = 0.5, callback = true})
+			audio_manager.play_sound_effect("UI/Okay")
+			self.choice = "exit"
+			gui.set_scale(self.exit_button, self.hover_scale)
+		elseif action.released then
+			gui.set_scale(self.exit_button, self.default_scale)
+			msg.post(".", "release_input_focus")
+		end
+	end
 end

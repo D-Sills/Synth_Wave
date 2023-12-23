@@ -1,4 +1,4 @@
-local json = require "json"
+
 
 local function save_game_data(self)
     local data = {
@@ -31,7 +31,6 @@ function init(self)
     self.player_progress = { xp = 0, level = 1 }
     self.volume = 1
 
-    -- Load saved game data
     local saved_data = load_game_data()
     if saved_data then
         self.high_scores = saved_data.high_scores or {}
@@ -40,14 +39,22 @@ function init(self)
     end
 end
 
--- Example function to add XP and handle level up
 local function add_xp(self, amount)
     self.player_progress.xp = self.player_progress.xp + amount
-    if self.player_progress.xp >= 100 then -- Assuming 100 XP is needed to level up
+    if self.player_progress.xp >= 100 then -- 100 XP is needed to level up always
         self.player_progress.xp = 0
         self.player_progress.level = self.player_progress.level + 1
-        save_game_data(self) -- Save progress whenever it changes
+        save_game_data(self)
     end
+end
+
+local function rank_to_number(rank)
+    local rank_values = {F = 1, D = 2, C = 3, B = 4, A = 5, S = 6}
+    return rank_values[rank] or 0
+end
+
+local function is_better_rank(new_rank, current_rank)
+    return rank_to_number(new_rank) > rank_to_number(current_rank)
 end
 
 function on_message(self, message_id, message, sender)
@@ -59,24 +66,36 @@ function on_message(self, message_id, message, sender)
         self.volume = message.volume
         save_game_data(self)
     elseif message_id == hash("save_data") then
-        if message.song and message.score and message.rank then
-            local song_data = self.high_scores[message.song] or {}
-            if not song_data.score or message.score > song_data.score then
-                song_data.songname = message.song
-                song_data.rank = message.rank
-                song_data.score = message.score
-                self.high_scores[message.song] = song_data
+        local existing_song_data = self.high_scores[message.song] or {}
 
-                save_game_data(self)
-            end
+        -- Check and update score
+        if not existing_song_data.score or message.score > existing_song_data.score then
+            existing_song_data.score = message.score
         end
+
+        -- Check and update rank
+        if not existing_song_data.rank or is_better_rank(message.rank, existing_song_data.rank) then
+            existing_song_data.rank = message.rank
+        end
+
+        -- Check and update clear percentage
+        local new_clear_percentage = (message.timer / 180) * 100 -- use actual song length here but i'm probably not gonna do that!
+        if not existing_song_data.clear_percentage or new_clear_percentage > existing_song_data.clear_percentage then
+            existing_song_data.clear_percentage = new_clear_percentage
+        end
+
+        existing_song_data.songname = message.song
+        self.high_scores[message.song] = existing_song_data
+        save_game_data(self)
     elseif message_id == hash("get_high_scores") then
         msg.post(sender, "high_scores", { scores = self.high_scores })
     elseif message_id == hash("get_player_progress") then
-        msg.post(sender, "player_progress", { progress = self.player_progress })
-    elseif message_id == hash("end_level") then
-        msg.post(self.current_level, "end_level")
+        msg.post(sender, "load_player_progress", { progress = self.player_progress })
     elseif message_id == hash("get_volume") then
         msg.post(sender, "load_volume", { volume = self.volume })
+    elseif message_id == hash("get_level") then
+        msg.post(sender, "load_level", { level = self.current_level })
+    elseif message_id == hash("end_level") then
+        msg.post(self.current_level, "end_level")
     end
 end

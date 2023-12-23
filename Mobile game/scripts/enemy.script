@@ -12,6 +12,11 @@ function init(self)
     self.screen_width = utils.get_screen_size().width
     self.screen_height = utils.get_screen_size().height
     self.target_pos = vmath.vector3(self.screen_width / 2, self.screen_height / 2 + 30, 0)
+    
+    self.speed = self.speed * math.random(0.8, 1.2)
+    self.rotation_speed = self.rotation_speed * math.random(0.8, 1.2)
+    
+    self.speed = self.speed * utils.get_difficulty()
     --go.set(msg.url("#sprite"), "tint", vmath.vector4(1, 0, 0, 1))
 end
 

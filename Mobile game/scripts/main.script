@@ -43,6 +43,8 @@ function init(self)
       fmod.studio.system:load_bank_memory(resource.load(bank_path .. "SFX.bank"), fmod.STUDIO_LOAD_BANK_NORMAL)
     end
 
+    audio_manager.init()
+
     msg.post("/collections#collection_manager", "initial_load")
 end
 

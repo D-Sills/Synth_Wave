@@ -1,9 +1,10 @@
 [project]
-title = Mobile game
+title = Synthwave Showdown
 bundle_resources = 
 bundled = false
 custom_resources = assets/banks/
-version = 0.1
+version = 1.0
+developer = Darrizard
 dependencies#0 = https://github.com/dapetcu21/defold-fmod/archive/v2.6.1.zip
 dependencies#1 = https://github.com/britzl/defold-orthographic/archive/refs/tags/3.3.0.zip
 dependencies#2 = https://github.com/britzl/defold-input/archive/refs/tags/4.6.1.zip
@@ -48,7 +49,7 @@ app_icon_192x192 = /assets/ui/app_icons/icon_192.png
 input_method = HiddenInputField
 immersive_mode = 0
 display_cutout = 0
-package = com.rhythm.game
+package = com.synthwave.game
 
 [script]
 shared_state = 1
