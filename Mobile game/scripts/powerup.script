@@ -12,7 +12,7 @@ end
 function update(self, dt)
     local pos = go.get_position()
     local dir = vmath.normalize(self.target_pos - pos)
-    local speed = 100
+    local speed = 300
     go.set_position(pos + dir * speed * dt)
 end
 

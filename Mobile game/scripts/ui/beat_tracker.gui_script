@@ -44,10 +44,6 @@ function init(self)
     self.heart = gui.get_node("heart")
     self.heart_default_scale = gui.get_scale(self.heart)
     self.heart_hover_scale = vmath.vector3(0.25, 0.25, 1)
-
-    for i = 1, self.beats_ahead do
-        spawn_beat_rectangles(self, i)
-    end
 end
 
 

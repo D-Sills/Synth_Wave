@@ -23,79 +23,6 @@ Feel free to highlight where you feel you have excelled in the addition comments
 
 The game should be sprite based, have more than one sprite, and should have a tilemap.  The game should be playable on a mobile device.
 
-### Notes
-
-#### * Game Design Doc
-
-* The Game Design Doc should be in the repository, it should be in markdown format and should be around 1200-1800 words.  It should render in github correctly.  It should contain the following sections:
-    * Game Overview
-      * High level overview of the game
-      * Detail why this game works well on a mobile device
-    * Gameplay
-      * More detailed description of the gameplay
-      * Bonuses, powerups, etc
-    * Game Progression
-        * Details of how a character progresses through the game
-        * How the game is won or lost
-        * How the game is scored
-    * Game Mechanics
-        * How input is handled
-        * Interactions with characters and the environment
-        * Camera
-        * Defold addressing and messaging
-    * Game World
-      * Details of the game world, the setting and the environment.
-      * Visuals of the game world
-    * Characters
-      * Details of the characters, their backstory, motivation, and personality if applicable
-      * Include visuals about the character
-    * Mobile Game Design
-      * Outline how a game is designed for mobile in general, not your specific game
-      * Compare the guidelines for mobile game development to your game and highlight where you are following the guidelines and where you are not
-      * Suggest ways to make the game more suitable for the mobile market
-    * Monetisation
-        * Outline how the game could be monetised
-    * Distribution
-        * Outline how the game could be distributed for the mobile market, include mainstream and alternative (idie) distribution methods
-* It should be written in markdown format and should be in a file called `docs/design.md`
-* Should not be written in the first or second person, and they should not contain vague terms (e.g. “a head shot will result in ‘significant’ damage”).  Aspirational writing should not be used (e.g. hopefully the drawbridge animation will point the player in the right direction). Write in a technical style, in other words be concise, precise, direct, and well organised.
-* Grading will be based on the level of detail, the quality of the writing, and the overall presentation of the document from Starter to Excellent. 
-
-Resources:
-
-* https://docs.github.com/en/get-started/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax
-* https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet
-
-
-#### ** Defold Components **
-
-* The use of Defold components will be graded as per the variety and level of use from Starter to Excellent
-* The following defold components MUST be used (Note that physics objects are graded separately and not included in this list)
-  * GUI Components
-  * Game Objects
-  * Game Object Factories
-  * Sprites
-  * Animations
-  * Tilemaps and Tile Sources
-
-Feel free to include any other components such particle effects, sound, third party animation etc, you should highlight the usage of these in addition comments below.
-
-#### Code Quality
-
-All technical elements of the grading rubric will take code quality into account.
-
-Addressing (messaging) is a core aspect of defold and expands across most technical areas of the grading, this is included as a core aspect of code quality.
-
-Your addressing should be clear and concise.
-
-
-## Grading
-
-This is worth 60% of your final CA.
-
-Each column of the grading rubric is worth 20% of this assignment.
-
-
 # Submission
 
 1. You must use the github classroom repository and commits should be spread over time
@@ -115,49 +42,34 @@ Each column of the grading rubric is worth 20% of this assignment.
     1. Generative AI is an excellent tool but you risk not learning fundamental skills by relying on it too soon
 9. Usage of any published source should be referenced and documented via comments, you may be asked to explain inner workings of such usages
 
+* Student Number: 20080901
+* Name: Darren Sills
+* GitHub username: D-Sills
 
-
-## Setup Instructions
-
-Please fill in the following information and `commit` and `push`
-
-* Student Number:
-* Name: 
-* GitHub username: 
-
-
-
+[Design Document](docs/design.md)
 
 ## Submission
 ### Self Assessment Rubric
 
-Use Markdown table extensions for visual studio code to help.
-
-Each entry should be kept succinct.  Point to documentation where required. A table that does not render correctly will result in lost marks.
-
-If you fail to point out where you should get marks, it may affect your grade.
-
-| Grade     | Game Design Doc | Game Config/Setup | Defold Components | Game Progression | Physics |
-| --------- | --------------- | ----------------- | ----------------- | ---------------- | ------- |
-| Starter   |                 |                   |                   |                  |         |
-| Basic     |                 |                   |                   |                  |         |
-| Good      |                 |                   |                   |                  |         |
-| Excellent |                 |                   |                   |                  |         |
+| Grade     | Game Design Doc                                                           | Game Config/Setup                              | Defold Components                                                            | Game Progression | Physics                                             |
+| --------- |---------------------------------------------------------------------------|------------------------------------------------|------------------------------------------------------------------------------| ---------------- |-----------------------------------------------------|
+| Starter   | Basic description of game                                                 | Splash screen/ robust scene management         | Sprites, basic GUI, labels                                                   |See below                  | See below                                           |
+| Basic     | Deeper delving into mechanics                                             | Main menu/ level selection                     | Manipulating of sprites, basic animations, collision objects and groups      |See below                  | See below                                           |
+| Good      | Mention potential improvements, good use of markdown                      | Persistent high scores/rankings and user level | Factories, collection proxies, 3rd party libraries from defold asset browser |3 different levels, player choice. Replayable.                 | Multiple collision groups, player, pickups, enemies |
+| Excellent | Clear and concise language, accurately describes the game and all systems | Volume control via slider                      | ParticleFX, heavy usage of GUI and templates, lua modules                    |Overarching account level, increases depending on success | Had no need for advanced physics                    |
 
 ### Additional Comments and Highlights
 
-Here you should highlight where you feel you should get marks, and any other comments you feel are relevant
+I guess first things first, this is definitely not what you expected. Maybe not the best choice of project since I couldn't really implement more advanced phsyics or
+tilemaps, but I think the final result was pretty good. It would be easy enough to add more levels and songs, and I think the game is pretty fun to play. 
+It could definetly use some polish, but time is tight at the moment as I'm sure you understand. Better level designs and improved feedback and visual effects would go a long way.
+
+All in all, I'm pretty happy with how it turned out. I think I did a good job of using the Defold engine to its full potential, and I learned a lot about the engine
+and lua in general. While I'm not sure if I'll be using Defold in the future, I'm glad I got the chance to learn it.
+
+I used FMOD for the audio, which is a 3rd party library and very powerful audio solution. I'm actually using it in my final year project, so I thought it would be a good idea to get some practice with it.
+I was pleasantly surprised by the Defold integration, which was done entirely by the community.
 
 ### Video Link
 
-Game Explanation and Walkthrough Video Link: 
-
-Make your case for where you believe you should get marks, reference the grading rubric where necessary
-
-### Checklist
-
-1. Final push to github repository?
-2. Documentation added to repo?
-3. Video links added to README?
-4. Grading Rubric filled in?
-5. Zip of repository uploaded to Moodle?
+Game Explanation and Walkthrough Video Link:

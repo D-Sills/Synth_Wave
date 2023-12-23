@@ -14,7 +14,6 @@ function init(self)
 	--msg.post("gui", "register_analog", { id = "analog", radius = 80 })
 	msg.post("gui", "register_analog", { id = "analog", radius = 80 })
 	msg.post("gui", "register_button", { id = "shoot_button" })
-	print("player init")
 	self.velocity = vmath.vector3()
 	audio_manager.subscribe(msg.url())
 
@@ -57,22 +56,23 @@ end
 local function fire_bullet(self, spawn_position, forward_vector, weapon_rotation_quat)
     local id = factory.create("#laserfactory", spawn_position, weapon_rotation_quat)
 	print (id .. " is the id")
+	
     -- Adjust projectile based on power-ups
     if self.is_shooting_large_bullets then
-        -- Increase the size of the bullet
+        -- increase the size of the bullet
         go.set_scale(vmath.vector3(2.5, 2.5, 1), id)
     end
 
-	-- tiny red when double damage
+	-- turn red when double damage
 	if self.is_dealing_double_damage then
 		-- Change the color of the bullet
-		go.set(id, "tint", vmath.vector4(1, 0, 0, 1))
+		-- go.set(id.."#sprite", "tint", vmath.vector4(1, 0, 0, 1)) bro how do you even do this everything i try just breaks
 	end
 
 	self.attack_power = self.is_dealing_double_damage and 2 or 1
 
     -- Projectile movement logic
-    local projectile_speed = 500  -- Adjust as needed
+    local projectile_speed = 500 
     local move_distance = 1500
     local target_position = spawn_position + forward_vector * move_distance
     local travel_time = move_distance / projectile_speed
@@ -85,8 +85,10 @@ local function fire_bullet(self, spawn_position, forward_vector, weapon_rotation
 end
 
 local function die(self) 
-	
-	
+	msg.post("main:/camera", "shake", { duration = 0.6, magnitude = 0.1 })
+	msg.post("/gui#floating_text", "show_floating_text", { position = go.get_position(), text = "You Died" })
+	msg.post("main:/game_manager#game_manager", "end_level")
+	go.delete()
 end
 
 function on_message(self, message_id, message, sender)
@@ -120,11 +122,8 @@ function on_message(self, message_id, message, sender)
 	elseif message_id == hash("onscreen_button") and message.id == hash("shoot_button") and message.released then
 		if self.time_since_last_shot <= 0 then
 			local rating = audio_manager.handle_player_action()
-			        -- Calculate the forward direction
-			-- Assume the 'forward' direction is up the screen in local space (0, 1, 0)
+
 			local base_forward_vector = vmath.vector3(0, 1, 0)
-			
-			-- Get the rotation of the weapon game object as a quaternion
 			local weapon_rotation_quat = go.get_rotation("/weapon#weapon")
 			
 			-- Rotate the base forward vector by the weapon's rotation to get the forward vector in world space
@@ -132,24 +131,23 @@ function on_message(self, message_id, message, sender)
 			
 			-- Define the offset distance in front of the player where the projectile will spawn
 			local offset_distance = 30
-			-- Make sure to get the weapon's world position if the weapon sprite is a separate game object
 			local weapon_position = go.get_world_position("/weapon#weapon")
 			local spawn_position = weapon_position + forward_vector * offset_distance
 			
 			if self.time_since_last_shot <= 0 then
-				
 				if self.is_firing_spiral_bullets then
-						-- fire 3 bullets in a spread like a shotgun
-						local spread_angle = math.rad(20)
-						local left_bullet_angle = math.atan2(forward_vector.y, forward_vector.x) - spread_angle
-						local right_bullet_angle = math.atan2(forward_vector.y, forward_vector.x) + spread_angle
-						local left_bullet_direction = vmath.quat_rotation_z(left_bullet_angle)
-						local right_bullet_direction = vmath.quat_rotation_z(right_bullet_angle)
-						fire_bullet(self, spawn_position, vmath.rotate(left_bullet_direction, forward_vector), weapon_rotation_quat)
-						fire_bullet(self, spawn_position, forward_vector, weapon_rotation_quat)
-						fire_bullet(self, spawn_position, vmath.rotate(right_bullet_direction, forward_vector), weapon_rotation_quat)
-						
-					
+					local spread_angle = math.rad(6)  -- Angle for the spread; adjust as needed
+
+					-- Fire bullet straight forward
+					fire_bullet(self, spawn_position, forward_vector, weapon_rotation_quat)
+				
+					-- Fire bullet to the left
+					local left_vector = vmath.rotate(weapon_rotation_quat, vmath.vector3(math.cos(-spread_angle), math.sin(-spread_angle), 0))
+					fire_bullet(self, spawn_position, left_vector, weapon_rotation_quat)
+				
+					-- Fire bullet to the right
+					local right_vector = vmath.rotate(weapon_rotation_quat, vmath.vector3(math.cos(spread_angle), math.sin(spread_angle), 0))
+					fire_bullet(self, spawn_position, right_vector, weapon_rotation_quat)
 				else
 				-- Fire a single bullet
 				fire_bullet(self, spawn_position, forward_vector, weapon_rotation_quat)
@@ -193,7 +191,7 @@ function on_message(self, message_id, message, sender)
 		end
 	elseif message_id == hash("power_up_collected") then
 		if message.type == 1 then
-			self.hp = self.hp + 1
+			if self.hp < self.max_health then self.hp = self.hp + 1 end
 			msg.post("/gui#hud", "update_health", { health = self.hp, max_health = self.max_health })
 			msg.post("/gui#floating_text", "show_floating_text", { position = go.get_position() + vmath.vector3(0,40,0), text = "+1 HP" })
         elseif message.type == 2 then
@@ -209,11 +207,7 @@ function on_message(self, message_id, message, sender)
             self.power_up_timers["spiral_bullets"] = 10  -- 10 beats of spiral bullets
             msg.post("/gui#floating_text", "show_floating_text", { position = go.get_position() + vmath.vector3(0,40,0), text = "Spiral Bullets" })
         end
-		
-		
-
-		--particlefx.play("#death_explosion")
-		--audio_manager.play_sound_effect("Combat/Death")
+		--audio_manager.play_sound_effect("Combat/Powerup")
 	
 	elseif message_id == hash("get_damage_to_take") then
 		msg.post(sender, "take_damage", { damage = self.attack_power * self.attack_power_multiplier })

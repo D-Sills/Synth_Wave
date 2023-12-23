@@ -1,5 +1,7 @@
 local self = {}
 
+-- https://old.reddit.com/r/gamedev/comments/2fxvk4/heres_a_quick_and_dirty_guide_i_just_wrote_how_to/ good guide on general rhythm game design
+
 NOW_PLAYING = nil
 BPM = 120
 CROTCHET = 60 / BPM -- 1 beat
@@ -146,7 +148,6 @@ end
 
 function self.unsubscribe(url)
 print ("unsubscribing to " .. url)
-    -- get index of url
     for i, v in ipairs(BEAT_SUBSCRIBERS) do
         if v == url then
             table.remove(BEAT_SUBSCRIBERS, i)

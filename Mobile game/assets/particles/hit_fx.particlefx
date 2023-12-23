@@ -1,7 +1,7 @@
 emitters {
   id: "emitter"
-  mode: PLAY_MODE_LOOP
-  duration: 1.0
+  mode: PLAY_MODE_ONCE
+  duration: 0.1
   space: EMISSION_SPACE_WORLD
   position {
     x: 0.0
@@ -18,9 +18,11 @@ emitters {
   animation: "anim"
   material: "/builtins/materials/particlefx.material"
   blend_mode: BLEND_MODE_ADD
-  particle_orientation: PARTICLE_ORIENTATION_DEFAULT
-  max_particle_count: 128
+  particle_orientation: PARTICLE_ORIENTATION_INITIAL_DIRECTION
+  inherit_velocity: 0.0
+  max_particle_count: 14
   type: EMITTER_TYPE_2DCONE
+  start_delay: 0.0
   properties {
     key: EMITTER_KEY_SPAWN_RATE
     points {
@@ -65,7 +67,7 @@ emitters {
     key: EMITTER_KEY_PARTICLE_LIFE_TIME
     points {
       x: 0.0
-      y: 2.5
+      y: 0.3
       t_x: 1.0
       t_y: 0.0
     }
@@ -85,7 +87,7 @@ emitters {
     key: EMITTER_KEY_PARTICLE_SIZE
     points {
       x: 0.0
-      y: 20.0
+      y: 18.0
       t_x: 1.0
       t_y: 0.0
     }
@@ -105,7 +107,7 @@ emitters {
     key: EMITTER_KEY_PARTICLE_GREEN
     points {
       x: 0.0
-      y: 1.0
+      y: 0.0
       t_x: 1.0
       t_y: 0.0
     }
@@ -115,7 +117,7 @@ emitters {
     key: EMITTER_KEY_PARTICLE_BLUE
     points {
       x: 0.0
-      y: 1.0
+      y: 0.0
       t_x: 1.0
       t_y: 0.0
     }
@@ -269,5 +271,15 @@ emitters {
       t_x: 1.0
       t_y: 0.0
     }
+  }
+  size_mode: SIZE_MODE_MANUAL
+  start_delay_spread: 0.0
+  duration_spread: 0.0
+  stretch_with_velocity: false
+  start_offset: 0.0
+  pivot {
+    x: 0.0
+    y: 0.0
+    z: 0.0
   }
 }

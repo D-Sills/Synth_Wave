@@ -1,0 +1,82 @@
+local json = require "json"
+
+local function save_game_data(self)
+    local data = {
+        high_scores = self.high_scores,
+        player_progress = self.player_progress,
+        volume = self.volume
+    }
+    local path = sys.get_save_file("Synthwave Showdown", "game_data.json")
+    local file = io.open(path, "w")
+    if file then
+        file:write(json.encode(data))
+        io.close(file)
+    end
+end
+
+local function load_game_data()
+    local path = sys.get_save_file("Synthwave Showdown", "game_data.json")
+    local file = io.open(path, "r")
+    if file then
+        local data = json.decode(file:read("*a"))
+        io.close(file)
+        return data
+    end
+    return { high_scores = {}, player_progress = { xp = 0, level = 1 }, volume = 1 }
+end
+
+function init(self)
+    self.current_level = nil
+    self.high_scores = {}
+    self.player_progress = { xp = 0, level = 1 }
+    self.volume = 1
+
+    -- Load saved game data
+    local saved_data = load_game_data()
+    if saved_data then
+        self.high_scores = saved_data.high_scores or {}
+        self.player_progress = saved_data.player_progress or { xp = 0, level = 1 }
+        self.volume = saved_data.volume or 1
+    end
+end
+
+-- Example function to add XP and handle level up
+local function add_xp(self, amount)
+    self.player_progress.xp = self.player_progress.xp + amount
+    if self.player_progress.xp >= 100 then -- Assuming 100 XP is needed to level up
+        self.player_progress.xp = 0
+        self.player_progress.level = self.player_progress.level + 1
+        save_game_data(self) -- Save progress whenever it changes
+    end
+end
+
+function on_message(self, message_id, message, sender)
+    if message_id == hash("set_level") then
+        self.current_level = message.level
+    elseif message_id == hash("add_xp") then
+        add_xp(self, message.amount)
+    elseif message_id == hash("set_volume") then
+        self.volume = message.volume
+        save_game_data(self)
+    elseif message_id == hash("save_data") then
+        if message.song and message.score and message.rank then
+            local song_data = self.high_scores[message.song] or {}
+            if not song_data.score or message.score > song_data.score then
+                song_data.songname = message.song
+                song_data.rank = message.rank
+                song_data.score = message.score
+                self.high_scores[message.song] = song_data
+
+                save_game_data(self)
+            end
+        end
+    elseif message_id == hash("get_high_scores") then
+        msg.post(sender, "high_scores", { scores = self.high_scores })
+    elseif message_id == hash("get_player_progress") then
+        msg.post(sender, "player_progress", { progress = self.player_progress })
+    elseif message_id == hash("end_level") then
+        msg.post(self.current_level, "end_level")
+    elseif message_id == hash("get_volume") then
+        msg.post(sender, "load_volume", { volume = self.volume })
+    end
+end

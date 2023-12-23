@@ -112,7 +112,7 @@ embedded_instances {
   id: "manager"
   data: "components {\n"
   "  id: \"level\"\n"
-  "  component: \"/scripts/level.script\"\n"
+  "  component: \"/scripts/levels/level_all_i_need.script\"\n"
   "  position {\n"
   "    x: 0.0\n"
   "    y: 0.0\n"

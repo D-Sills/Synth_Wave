@@ -1,13 +1,37 @@
 local audio_manager = require("scripts.modules.audio_manager")
+local utils = require("scripts.modules.utils")
 
 function init(self)
-
 	msg.post("main:/game_manager#scene_fader", "fade_in", {duration = 1, callback = true})
+	msg.post("main:/game_manager#game_manager", "get_volume")
+	
+	-- buttons
 	self.start_button = gui.get_node("start_button/button")
     self.default_scale = gui.get_scale(self.start_button)
-    self.hover_scale = vmath.vector3(0.4, 0.4, 1)
+    self.hover_scale = vmath.vector3(0.35, 0.35, 1)
+
+    -- slider
+    self.slider_bg = gui.get_node("slider_bg")
+    self.slider_handle = gui.get_node("handle")
+    self.slider_f = gui.get_node("slider_f")
+    self.is_dragging = false
+    self.audio_volume = 1.0
+
     --msg.post("main:/camera", "shake", { intensity = 0.05, duration = 2.5, direction = "both" })
     audio_manager.play_sound_effect("Voice/Welcome")
+end
+
+local function set_slider_value(self, value)
+    local new_pos = gui.get_position(self.slider_f)
+    new_pos.x = utils.clamp(value, gui.get_position(self.slider_f).x, gui.get_position(self.slider_f).x + gui.get_size(self.slider_f).x)
+    gui.set_position(self.slider_handle, new_pos)
+
+
+    self.audio_volume = (new_pos.x - gui.get_position(self.slider_f).x) / gui.get_size(self.slider_f).x
+    audio_manager.set_volume(self.audio_volume)
+
+    -- save data
+    msg.post("main:/game_manager#game_manager", "save_data", {volume = self.audio_volume})
 end
 
 function on_message(self, message_id, message, sender)
@@ -22,36 +46,41 @@ function on_message(self, message_id, message, sender)
 		msg.post("main:/collections#collection_manager", "load", {collection = "song_selection"})
 		msg.post(".", "release_input_focus")
 	end
-end
-
-local function start_game()
-    -- Logic to execute when button is clicked
-    print("Button clicked!")
-    --audio_manager.stop_music(0.5)
-    msg.post("main:/game_manager#scene_fader", "fade_out", {duration = 0.5, callback = true})
-    
-end
-
-function on_input(self, action_id, action)
-    if gui.pick_node(self.start_button, action.x, action.y) then
-        if action.pressed and (action_id == hash("click") or action_id == hash("touch")) then
-            -- Play click sound
-            audio_manager.play_sound_effect("UI/Okay")
-            
-            -- Trigger button action
-            start_game()
-
-            -- Scale back to default when clicked
-            gui.set_scale(self.start_button, self.hover_scale)
-        elseif action.released then
-            -- Scale up for hover effect
-            gui.set_scale(self.start_button, self.default_scale)
-        end
-    else
-
+	if message_id == hash("load_volume") then
+        self.audio_volume = message.volume
+        set_slider_value(self, gui.get_position(self.slider_f).x + gui.get_size(self.slider_f).x * self.audio_volume)
     end
 end
 
+local function start_game()
+    -- start button clicked
+    --audio_manager.stop_music(0.5)
+    msg.post("main:/game_manager#scene_fader", "fade_out", {duration = 0.5, callback = true})
+    msg.post(".", "release_input_focus")
+end
+
+function on_input(self, action_id, action)
+    if gui.pick_node(self.start_button, action.x, action.y) then -- start button
+        if action.pressed and (action_id == hash("click") or action_id == hash("touch")) then
+            audio_manager.play_sound_effect("UI/Okay")      
+            start_game()
+
+            gui.set_scale(self.start_button, self.hover_scale)
+        elseif action.released then
+            gui.set_scale(self.start_button, self.default_scale)
+        end
+    elseif gui.pick_node(self.slider_handle, action.x, action.y) then -- audio slider
+        if action.pressed then
+            self.is_dragging = true
+        elseif action.released then
+            self.is_dragging = false
+        end
+    if self.is_dragging and action_id == hash("touch") then
+        set_slider_value(self, action.x)
+    end
+
+    end
+end
 
 function update(self, dt)
 	audio_manager.update(dt)

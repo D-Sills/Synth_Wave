@@ -1,7 +1,7 @@
 emitters {
   id: "emitter"
   mode: PLAY_MODE_ONCE
-  duration: 1.0
+  duration: 0.1
   space: EMISSION_SPACE_WORLD
   position {
     x: 0.0
@@ -292,7 +292,7 @@ emitters {
   }
   size_mode: SIZE_MODE_MANUAL
   start_delay_spread: 0.0
-  duration_spread: 2.0
+  duration_spread: 0.0
   stretch_with_velocity: false
   start_offset: 0.0
   pivot {

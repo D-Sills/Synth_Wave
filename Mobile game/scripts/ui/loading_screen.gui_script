@@ -1,6 +1,13 @@
 function init(self)
 	print("loading screen init")
 	self.gui_node = gui.get_node("loading")
+
+    self.original_pos = gui.get_position(self.gui_node)
+    self.loading_text = "Loading"
+    self.dot_count = 0
+    self.dot_timer = 0
+    self.dot_interval = 0.5
+
 	msg.post("main:/game_manager#scene_fader", "fade_in", {duration = 0.2, callback = true})
 end
 
@@ -10,7 +17,7 @@ end
 
 function on_message(self, message_id, message, sender)
 	if message_id == hash("fade_in_done") then
-		-- random delay to simulate loading
+		-- random delay to simulate loading, idk if you can get loading operations from the engine? maybe
 		self.load_duration = math.random(1, 2)
 		timer.delay(self.load_duration, false, finish_load_scene)
 	end
@@ -21,10 +28,23 @@ end
 
 function update(self, dt)
 	if self.load_duration then
-		gui.set_color(self.gui_node, vmath.vector4(1, 1, 1, 1 - self.load_duration))
-		self.load_duration = self.load_duration - dt
-		if self.load_duration < 0 then
-			self.load_duration = nil
-		end
-	end
+        local alpha = 1 - math.abs(math.sin(self.load_duration * 5)) -- Flashing effect
+        gui.set_color(self.gui_node, vmath.vector4(1, 1, 1, alpha))
+
+
+	    self.dot_timer = self.dot_timer + dt
+	    if self.dot_timer > self.dot_interval then
+	        self.dot_timer = 0
+	        self.dot_count = (self.dot_count + 1) % 4
+	        local dots = string.rep(".", self.dot_count)
+	        gui.set_text(self.gui_node, self.loading_text .. dots)
+	    end
+
+        self.load_duration = self.load_duration - dt
+        if self.load_duration < 0 then
+            self.load_duration = 1
+        end
+    end
+
+    
 end

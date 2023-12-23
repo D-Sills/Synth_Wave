@@ -16,7 +16,7 @@ function init(self)
 	sys_config.path_sep = system_name == "Windows" and "\\" or "/"
 	sys_config.bundle_root_path = sys.get_application_path()
 
-	local isBundled = sys.get_config_string("project.bundled", "false") == "true"
+	local isBundled = sys.get_config_string("project.bundled", "false") == "true" -- https://github.com/dapetcu21/defold-fmod/tree/master?tab=readme-ov-file#loading-banks-from-the-file-system
     local bank_path
 	if
     isBundled and system_name ~= "HTML5"
