@@ -53,23 +53,22 @@ The game should be sprite based, have more than one sprite, and should have a ti
 
 | Grade     | Game Design Doc                                                           | Game Config/Setup                              | Defold Components                                                            | Game Progression | Physics                                             |
 | --------- |---------------------------------------------------------------------------|------------------------------------------------|------------------------------------------------------------------------------| ---------------- |-----------------------------------------------------|
-| Starter   | Basic description of game                                                 | Splash screen/ robust scene management         | Sprites, basic GUI, labels                                                   |See below                  | See below                                           |
-| Basic     | Deeper delving into mechanics                                             | Main menu/ level selection                     | Manipulating of sprites, basic animations, collision objects and groups      |See below                  | See below                                           |
+| Starter   | Basic description of game                                                 | Splash screen/ robust scene management         | Sprites, basic GUI, labels, tilemap                                                   |See below                  | See below                                           |
+| Basic     | Deeper delving into mechanics                                             | Main menu/ level selection, easy retries                     | Manipulating of sprites, basic animations, collision objects and groups      |See below                  | See below                                           |
 | Good      | Mention potential improvements, good use of markdown                      | Persistent high scores/rankings and user level | Factories, collection proxies, 3rd party libraries from defold asset browser |3 different levels, player choice. Replayable.                 | Multiple collision groups, player, pickups, enemies |
-| Excellent | Clear and concise language, accurately describes the game and all systems | Volume control via slider                      | ParticleFX, heavy usage of GUI and templates, lua modules                    |Overarching account level, increases depending on success | Had no need for advanced physics                    |
+| Excellent | Clear and concise language, accurately describes the game and all systems | Volume control via slider , difficulty selection                     | ParticleFX, heavy usage of GUI and templates, lua modules                    |Overarching account level, increases depending on success | Had no need for advanced physics                    |
 
 ### Additional Comments and Highlights
 
 I guess first things first, this is definitely not what you expected. Maybe not the best choice of project since I couldn't really implement more advanced phsyics or
-tilemaps, but I think the final result was pretty good. It would be easy enough to add more levels and songs, and I think the game is pretty fun to play. 
-It could definetly use some polish, but time is tight at the moment as I'm sure you understand. Better level designs and improved feedback and visual effects would go a long way.
+tilemaps(in a meaningful way), but I think the final result was pretty good. It would be easy enough to add more levels and songs, and I think the game is pretty fun to play. 
+It could definetly use some polish, but time is tight at the moment as I'm sure you understand. Better level designs, improved feedback and visual effects would go a long way. The UI is also an eye sore big time.
 
-All in all, I'm pretty happy with how it turned out. I think I did a good job of using the Defold engine to its full potential, and I learned a lot about the engine
+All in all, I'm pretty happy with how it turned out. I think I did a good job of using the Defold engine, especially the messaging and GUI, and I learned a lot about the engine itself,
 and lua in general. While I'm not sure if I'll be using Defold in the future, I'm glad I got the chance to learn it.
 
 I used FMOD for the audio, which is a 3rd party library and very powerful audio solution. I'm actually using it in my final year project, so I thought it would be a good idea to get some practice with it.
-I was pleasantly surprised by the Defold integration, which was done entirely by the community.
-
+I was pleasantly surprised by the Defold integration, which was done entirely by the community., open source. It worked more or less seamlessly.
 ### Video Link
 
 Game Explanation and Walkthrough Video Link:
