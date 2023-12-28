@@ -277,7 +277,7 @@ nodes {
   xanchor: XANCHOR_NONE
   yanchor: YANCHOR_NONE
   pivot: PIVOT_CENTER
-  adjust_mode: ADJUST_MODE_STRETCH
+  adjust_mode: ADJUST_MODE_ZOOM
   parent: "start_button"
   layer: ""
   inherit_alpha: true
@@ -291,6 +291,7 @@ nodes {
   clipping_visible: true
   clipping_inverted: false
   alpha: 1.0
+  overridden_fields: 17
   template_node_child: true
   size_mode: SIZE_MODE_MANUAL
   custom_type: 0
@@ -336,7 +337,7 @@ nodes {
   xanchor: XANCHOR_NONE
   yanchor: YANCHOR_NONE
   pivot: PIVOT_CENTER
-  adjust_mode: ADJUST_MODE_STRETCH
+  adjust_mode: ADJUST_MODE_ZOOM
   parent: "start_button/button"
   layer: ""
   inherit_alpha: true
@@ -353,6 +354,7 @@ nodes {
   overridden_fields: 2
   overridden_fields: 4
   overridden_fields: 9
+  overridden_fields: 17
   overridden_fields: 38
   template_node_child: true
   size_mode: SIZE_MODE_MANUAL

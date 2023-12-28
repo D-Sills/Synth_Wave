@@ -75,7 +75,6 @@ for _, handle in ipairs(self.timeline_handles) do
 	end
 end
 self.timeline_handles = {}
-self.finished = true
 
 --msg.post("main:/game_manager#scene_fader", "fade_out", {duration = 1, callback = true})
 -- save
@@ -163,13 +162,13 @@ end
 end
 
 function update(self, dt)
-if self.actually_finished then return end
-if finished and enemy_count == 0 then
-	end_level(self)
-end
+	if finished and enemy_count <= 1 then
+		if self.actually_finished then return end
+		end_level(self)
+	end
 
-self.timer = self.timer + dt
-audio_manager.update(dt)
+	self.timer = self.timer + dt
+    audio_manager.update(dt)
 end
 
 function final(self)

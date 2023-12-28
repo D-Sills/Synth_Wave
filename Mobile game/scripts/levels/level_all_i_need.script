@@ -75,8 +75,7 @@ local function end_level(self)
         end
     end
     self.timeline_handles = {}
-	self.finished = true
-
+    
 	--msg.post("main:/game_manager#scene_fader", "fade_out", {duration = 1, callback = true})
 	-- save
 	--calculate rank
@@ -163,8 +162,8 @@ function on_message(self, message_id, message, sender)
 end
 
 function update(self, dt)
-	if self.actually_finished then return end
-	if finished and enemy_count == 0 then
+	if finished and enemy_count <= 1 then
+		if self.actually_finished then return end
 		end_level(self)
 	end
 
