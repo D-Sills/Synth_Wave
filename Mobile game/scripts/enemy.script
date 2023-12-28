@@ -75,7 +75,7 @@ function on_message(self, message_id, message, sender)
 
         local move_dir = vmath.normalize(dir_to_player)
         local new_pos = pos + move_dir * self.speed
-        print("Enemy:", go.get_id(), "Pos:", pos, "Dir:", dir_to_player, "MoveDir:", move_dir, "NewPos:", new_pos, "Speed:", self.speed)
+        --print("Enemy:", go.get_id(), "Pos:", pos, "Dir:", dir_to_player, "MoveDir:", move_dir, "NewPos:", new_pos, "Speed:", self.speed)
         go.set_position(new_pos)
         
     elseif message_id == hash("collision_response") then

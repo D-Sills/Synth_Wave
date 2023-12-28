@@ -15,13 +15,13 @@ local function set_difficulty_and_update_buttons(self, index)
 
     if index == 1 then
         --audio_manager.play_sound_effect("Voice/Easy")
-        utils.set_difficulty("easy")
+        utils.set_difficulty(DIFFCULTY.EASY)
     elseif index == 2 then
         --audio_manager.play_sound_effect("Voice/Medium")
-        utils.set_difficulty("medium")
+        utils.set_difficulty(DIFFCULTY.MEDIUM)
     elseif index == 3 then
         --audio_manager.play_sound_effect("Voice/Hard")
-        utils.set_difficulty("hard")
+        utils.set_difficulty(DIFFCULTY.HARD)
     end
     
     msg.post("main:/game_manager#game_manager", "set_difficulty", {difficulty = index})

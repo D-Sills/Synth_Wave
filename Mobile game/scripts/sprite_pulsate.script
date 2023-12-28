@@ -1,0 +1,29 @@
+local audio_manager = require("scripts.modules.audio_manager")
+
+go.property("sprite", hash(""))
+
+function init(self)
+    self.default_scale = go.get_scale(self.sprite)
+
+    self.pulsate_min = 1
+    self.pulsate_max = 1.02
+
+    audio_manager.subscribe(msg.url())
+end
+
+local function pulsate_sprite(self)
+    go.animate(self.sprite, "scale", go.PLAYBACK_ONCE_PINGPONG, self.pulsate_min * self.default_scale, go.EASING_INOUTSINE, 0.1, 0, function()
+        go.animate(self.sprite, "scale", go.PLAYBACK_ONCE_PINGPONG, self.pulsate_max * self.default_scale, go.EASING_INOUTSINE, 0.1)
+    end)
+end
+
+function on_message(self, message_id, message, sender)
+    if message_id == hash("beat") then
+        pulsate_sprite(self)
+    end
+end
+
+function final(self)
+
+    audio_manager.unsubscribe(msg.url())
+end

@@ -47,7 +47,6 @@ function self.play_music(event_name, fade_time)
         NOW_PLAYING = event
     end
 
-    print("BPM: " .. BPM)
     print("SONG_LENGTH: " .. SONG_LENGTH)
 end
 

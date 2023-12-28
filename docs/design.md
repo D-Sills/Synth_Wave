@@ -39,7 +39,7 @@
 
 ## Game Overview
 ### High-Level Overview
-"Synth_Wave" is a rhythm-based top-down shooter game set in a vibrant, neon-lit world inspired by 1980s synthwave aesthetics.
+"Synth_Wave" is a rhythm-based top-down shooter game set in a vibrant, neon-lit world inspired by 1980s synth-wave aesthetics.
 The game combines fast-paced shooting action with rhythm game mechanics, requiring players to aim and shoot in sync with a pulsating
 synthwave soundtrack. Each level is designed around a specific track, with enemy patterns and events timed to the music,
 creating an immersive and rhythmic gameplay experience. All actions are timed to the beat of the music!
@@ -50,7 +50,7 @@ and shoot with simple gestures and taps. The level structure is optimized for sh
 perfect for on-the-go gaming. The game's vibrant visuals and soundtrack are designed to be highly engaging on smaller screens,
 making "Synth_Wave" an ideal fit for mobile gaming.
 
-The initial plan was for a twin-stick shooter, but the touch controls were not intuitive enough for mobile devices in my testing.
+The initial plan was for a twin-stick shooter, but the touch controls were deemed not intuitive enough for mobile devices in testing.
 
 ## Gameplay
 ### Detailed Gameplay Description
@@ -71,13 +71,13 @@ These power-ups have a chance to spawn when an enemy is defeated, and will then 
 
 ## Game Progression
 ### Character Progression
-Each song is a level, with the enemies and events designed around the music. Upon the song's completion, the player is given a rank based on their score.
+Each song is a level, with the enemies and events designed around the music. Upon the song's completion, the player is given a rank based on their score and time, gaining
+experience points which increase their account's level. Higher levels could unlock new songs and power-ups (not implemented), with the player's account level displayed on the main menu.
 ![Song Select](song_select.png)
 
 ### Winning and Losing
 A level is won by surviving until the end of the song while defeating waves of enemies. Failure occurs if the player's health depletes entirely.
-However, you can still get a high score even if you lose, with replayability encouraged by the short length of each session. 
-You will also gain account experience with each level completion, which will unlock new songs and power-ups. (new songs not implemented)
+However, you can still get a high score even if you lose, with replayability encouraged by the short length of each session.
 
 ### Scoring System
 The scoring system rewards players for maintaining rhythm and defeating enemies, with bonuses for consecutive on-beat actions.
@@ -124,25 +124,27 @@ with the enemies serving as obstacles to overcome.
 The player character is a simple sprite, with the enemies designed to be visually distinct and easily identifiable. 
 All colors are vibrant and saturated, fitting the game's retro-futuristic aesthetic.
 
-
 ## Mobile Game Design
 ### General Mobile Game Design Guidelines
-Mobile games should have intuitive controls, short play sessions, and visually appealing, often heavily stylized graphics.
-They should also be optimized for performance on various devices.
+Mobile games should have intuitive controls, short play sessions, and visually appealing, often heavily stylized graphics that will catch
+users eyes at a glance. They should also be heavily optimized for performance on various devices. While current hardware is quite powerful,
+it is still vital to ensure that the game runs smoothly on older devices, with huge portions of the market on such devices.
 
 ### Comparison to Your Game
 "Synth_Wave" aligns well with these principles through its simple touch controls, quick levels, and visually striking design. 
 However, its rhythm-based gameplay presents unique challenges in ensuring precise timing and synchronization on mobile devices. 
 FMOD will be used to ensure consistent audio playback across devices, which is an extremely robust and reliable audio engine.  
+
 The built-in Defold audio engine is not suitable for this type of game, as it is not designed for precise timing and synchronization.
 
 ### Adaptations for Mobile
 One key area of improvement would be to improve the experience of pausing and resuming the game, as this is a common occurrence on mobile devices.
-As of now, there are minor issues with the game's audio syncing when pausing and resuming, which could be improved with further development.
+As of now, there are minor issues with the game's audio syncing when pausing and resuming, which could be improved with further development. All issues
+are however purely cosmetic, and do not affect gameplay.
 
 ## Monetization
 ### Monetization Strategies
-The game could be monetized through in-app purchases for cosmetic items, or additional levels/levels.
+The game could be monetized through in-app purchases for cosmetic items, or additional levels/songs.
 An ad-supported free version could provide an alternative revenue stream. Advertising the game's soundtrack could also be a viable option, as the music is a key selling point.
 
 ## Distribution
