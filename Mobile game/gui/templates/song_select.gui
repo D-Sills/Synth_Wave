@@ -1,4 +1,4 @@
-script: "/scripts/ui/song_card.gui_script"
+script: ""
 fonts {
   name: "Kenney Future"
   font: "/assets/fonts/Kenney Future.font"

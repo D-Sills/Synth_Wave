@@ -20,7 +20,7 @@ function on_message(self, message_id, message, sender)
     if message_id == hash("collision_response") and message.other_id == hash("/player") then
         msg.post("/player#player", "power_up_collected", {type = self.type})
         
-        -- Optionally play a sound effect or visual effect
+        
 
         go.delete()
     end

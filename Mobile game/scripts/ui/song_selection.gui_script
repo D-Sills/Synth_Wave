@@ -8,7 +8,7 @@ function init(self)
 	msg.post("main:/game_manager#game_manager", "get_high_scores")
 	self.song_cards = { -- should use json or soemthing to store songs and references like this but this is small scale so it'll do
         {node = gui.get_node("all_i_need/panel"), song = "all_i_need"},
-        {node = gui.get_node("solf_millenium/panel"), song = "solf_millenium"},
+        {node = gui.get_node("soft_millenium/panel"), song = "soft_millenium"},
         {node = gui.get_node("high_rise/panel"), song = "high_rise"},
     }
 
@@ -90,9 +90,10 @@ function on_input(self, action_id, action)
             start_game()
             
             gui.set_scale(self.play_button, self.button_hover_scale)
+            msg.post('.', "release_input_focus")
         elseif action.released then
             gui.set_scale(self.play_button, self.default_button_scale)
-            msg.post('.', "release_input_focus")
+           
         end
     end
     if gui.pick_node(self.exit_button, action.x, action.y) then
@@ -104,9 +105,10 @@ function on_input(self, action_id, action)
             chosen_song = "main_menu" -- i'm lazy (O-O)-b
 
             gui.set_scale(self.exit_button, self.button_hover_scale)
+            msg.post('.', "release_input_focus")
         elseif action.released then
             gui.set_scale(self.exit_button, self.default_button_scale)
-            msg.post('.', "release_input_focus")
+            
         end
     end
 end

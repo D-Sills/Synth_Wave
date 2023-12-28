@@ -9,14 +9,13 @@ DIFFCULTY = {
     HARD = 1
 }
 
-CHOSEN_DIFFICULTY = DIFFCULTY.MEDIUM
+CHOSEN_DIFFICULTY = DIFFCULTY.HARD
 
 function self.lerp(a, b, t) -- defold lerp is vector3 only
 	return a + (b - a) * t
 end
 
 function self.clamp(val, lower, upper)
-    assert(val and lower and upper, "not very valid input")
     if lower > upper then lower, upper = upper, lower end
     return math.max(lower, math.min(upper, val))
 end

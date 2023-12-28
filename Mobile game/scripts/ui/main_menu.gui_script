@@ -30,6 +30,7 @@ local function set_slider_value(self,volume) -- only called when loading the sce
     gui.set_position(self.slider_handle, vmath.vector3(new_x, gui.get_position(self.slider_handle).y, 0))
     gui.set_size(self.slider_fill, vmath.vector3(new_x, gui.get_size(self.slider_fill).y, 0))
     self.audio_volume = volume
+    audio_manager.set_volume(volume)
 end
 
 local function set_xp_bar_value(self, xp, level)
@@ -67,9 +68,10 @@ function on_input(self, action_id, action)
             start_game()
 
             gui.set_scale(self.start_button, self.hover_scale)
+            msg.post(".", "release_input_focus")
         elseif action.released then
             gui.set_scale(self.start_button, self.default_scale)
-            msg.post(".", "release_input_focus")
+            
         end
     end
     if gui.pick_node(self.slider_handle, action.x, action.y) then -- audio slider

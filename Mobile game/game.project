@@ -1,5 +1,5 @@
 [project]
-title = Synthwave Showdown
+title = Synth_Wave
 bundle_resources = 
 bundled = false
 custom_resources = assets/banks/

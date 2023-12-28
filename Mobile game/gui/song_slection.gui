@@ -592,7 +592,7 @@ nodes {
     w: 1.0
   }
   type: TYPE_TEMPLATE
-  id: "solf_millenium"
+  id: "soft_millenium"
   parent: "songs"
   layer: "1"
   inherit_alpha: true
@@ -636,12 +636,12 @@ nodes {
   type: TYPE_BOX
   blend_mode: BLEND_MODE_ALPHA
   texture: "ui/glassPanel"
-  id: "solf_millenium/panel"
+  id: "soft_millenium/panel"
   xanchor: XANCHOR_NONE
   yanchor: YANCHOR_NONE
   pivot: PIVOT_CENTER
   adjust_mode: ADJUST_MODE_STRETCH
-  parent: "solf_millenium"
+  parent: "soft_millenium"
   layer: ""
   inherit_alpha: true
   slice9 {
@@ -695,12 +695,12 @@ nodes {
   type: TYPE_BOX
   blend_mode: BLEND_MODE_ALPHA
   texture: "ui/cover"
-  id: "solf_millenium/cover"
+  id: "soft_millenium/cover"
   xanchor: XANCHOR_NONE
   yanchor: YANCHOR_NONE
   pivot: PIVOT_CENTER
   adjust_mode: ADJUST_MODE_STRETCH
-  parent: "solf_millenium/panel"
+  parent: "soft_millenium/panel"
   layer: ""
   inherit_alpha: true
   slice9 {
@@ -756,7 +756,7 @@ nodes {
   blend_mode: BLEND_MODE_ALPHA
   text: "Best Rank -"
   font: "Kenney Future"
-  id: "solf_millenium/rank"
+  id: "soft_millenium/rank"
   xanchor: XANCHOR_NONE
   yanchor: YANCHOR_NONE
   pivot: PIVOT_CENTER
@@ -774,7 +774,7 @@ nodes {
   }
   adjust_mode: ADJUST_MODE_STRETCH
   line_break: false
-  parent: "solf_millenium/panel"
+  parent: "soft_millenium/panel"
   layer: ""
   inherit_alpha: true
   alpha: 1.0
@@ -824,7 +824,7 @@ nodes {
   text: "Soft Millenium\n"
   "3D63"
   font: "Kenney Space"
-  id: "solf_millenium/song_name"
+  id: "soft_millenium/song_name"
   xanchor: XANCHOR_NONE
   yanchor: YANCHOR_NONE
   pivot: PIVOT_CENTER
@@ -842,7 +842,7 @@ nodes {
   }
   adjust_mode: ADJUST_MODE_STRETCH
   line_break: false
-  parent: "solf_millenium/panel"
+  parent: "soft_millenium/panel"
   layer: ""
   inherit_alpha: true
   alpha: 1.0
@@ -892,7 +892,7 @@ nodes {
   blend_mode: BLEND_MODE_ALPHA
   text: "Cleared --,-- %"
   font: "Kenney Future"
-  id: "solf_millenium/clear"
+  id: "soft_millenium/clear"
   xanchor: XANCHOR_NONE
   yanchor: YANCHOR_NONE
   pivot: PIVOT_CENTER
@@ -910,7 +910,7 @@ nodes {
   }
   adjust_mode: ADJUST_MODE_STRETCH
   line_break: false
-  parent: "solf_millenium/panel"
+  parent: "soft_millenium/panel"
   layer: ""
   inherit_alpha: true
   alpha: 1.0

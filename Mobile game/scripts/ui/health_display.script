@@ -1,0 +1,57 @@
+local max_hearts = 10
+local heart_spacing = 10
+local hearts_per_row = 5
+local heart_size = 50
+
+function init(self)
+	self.hearts = {}
+end
+
+local function position_heart(heart, index, is_shield)
+    local row = math.floor((index - 1) / hearts_per_row)
+    local col = (index - 1) % hearts_per_row
+
+    local x = col * (heart_size + heart_spacing)
+    local y = -row * (heart_size + heart_spacing) 
+
+    local position = vmath.vector3(x, y, 0) + vmath.vector3(225, 650, 1)
+    go.set_position(position, heart)
+end
+
+
+local function update_hearts(self, max_health, health, shields)
+    self.total_icons = max_health + shields
+
+    -- Adjust the number of heart entities
+    while #self.hearts < self.total_icons do
+        local heart = factory.create("/hp#factory")
+        table.insert(self.hearts, heart)
+    end
+    while #self.hearts > self.total_icons do
+        local heart = table.remove(self.hearts)
+        go.delete(heart)
+    end
+
+    -- Update heart states for health
+    for i = 1, max_health do
+        local heart = self.hearts[i]
+        position_heart(heart, i, false)
+        local flipbook = i <= health and "heart_full" or "heart_empty"
+        sprite.play_flipbook(heart, hash(flipbook))
+    end
+
+    -- Update heart states for shields
+    for i = 1, shields do
+        local heart = self.hearts[max_health + i]
+        position_heart(heart, max_health + i, true)
+        sprite.play_flipbook(heart, hash("heart_shield"))
+    end
+end
+
+
+
+function on_message(self, message_id, message, sender)
+	if message_id == hash("update_health") then
+		update_hearts(self, message.max_health ,message.health, message.shields)
+	end
+end

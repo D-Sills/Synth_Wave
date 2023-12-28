@@ -44,7 +44,6 @@ function init(self)
     end
 
     audio_manager.init()
-
     msg.post("/collections#collection_manager", "initial_load")
 end
 

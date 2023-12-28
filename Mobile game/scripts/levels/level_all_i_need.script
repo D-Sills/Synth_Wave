@@ -2,12 +2,15 @@ local audio_manager = require("scripts.modules.audio_manager")
 local utils = require("scripts.modules.utils")
 
 go.property("BPM", 124)
-go.property("enemy_1_factory", hash("")) -- lazy
+go.property("enemy_1_factory", hash(""))
 go.property("enemy_2_factory", hash(""))
 go.property("enemy_3_factory", hash(""))
 
 local total_points_possible = 0
+local finished = false
+local enemy_count = 0
 
+-- should split this into a different script but since the levels are structurally identical it's fine for now
 local function spawn_enemy(enemy_type, position)
 	if enemy_type == "1" then
 		factory.create("#enemy_1_factory", position)
@@ -19,6 +22,7 @@ local function spawn_enemy(enemy_type, position)
 		factory.create("#enemy_3_factory", position)
 		total_points_possible = total_points_possible + 300
 	end
+	enemy_count = enemy_count + 1
 end
 
 local function spawn_wave(enemy_type, count)
@@ -32,7 +36,7 @@ local timeline = { -- surely a better way to do this? idk. i guess some sort of 
 		audio_manager.play_sound_effect("Voice/Begin Countdown") 
 		audio_manager.BPM = 124
 	end }, -- chatgpt made this :) obviously this should be handcrafted but i don't have time to curate a good experience
-	{ time = 3, action = function() audio_manager.play_music("Music/All I Need", 0.5) end },
+	{ time = 3, action = function() audio_manager.play_music("Music/all_i_need", 0.5) end },
 	{ time = 5, action = function() spawn_wave("1", 2) end },
 	{ time = 15, action = function() spawn_wave("2", 2) end },
 	{ time = 20, action = function() spawn_wave("3", 1) end },
@@ -56,14 +60,12 @@ local timeline = { -- surely a better way to do this? idk. i guess some sort of 
     { time = 165, action = function() spawn_wave("2", 2) end },  -- Slower wave of enemy 2
     { time = 175, action = function() spawn_wave("1", 3) end },  -- Final wave of enemy 1
     { time = 185, action = function() 
-        -- Ending actions like slowing down music, preparing for level end, etc.
-    end },
-    { time = 195, action = function() 
-        -- Final cleanup, score tallying, and transition out of the level
+		finished = true
     end }
 }
 
 local function end_level(self)
+	self.actually_finished = true
 	msg.post(".", "release_input_focus")
 	audio_manager.stop_music(1)
 
@@ -80,23 +82,24 @@ local function end_level(self)
 	--calculate rank
 	local rank = ""
 	local xp_gain = 0
-	if self.score > total_points_possible * 0.9 then
+	if self.score > total_points_possible * 0.7 then
 		rank = "S"
 		xp_gain = 50
-	elseif self.score > total_points_possible * 0.8 then
+	elseif self.score > total_points_possible * 0.65 then
 		rank = "A"
 		xp_gain = 40
-	elseif self.score > total_points_possible * 0.7 then
+	elseif self.score > total_points_possible * 0.5 then
 		rank = "B"
 		xp_gain = 30
-	elseif self.score > total_points_possible * 0.6 then
+	elseif self.score > total_points_possible * 0.3 then
 		rank = "C"
 		xp_gain = 20
-	elseif self.score > total_points_possible * 0.5 then
+	elseif self.score > total_points_possible * 0.1 then
 		rank = "D"
 		xp_gain = 10
 	else
 		rank = "F"
+		xp_gain = 1
 	end
 
 	local song_name = "all_i_need"
@@ -151,12 +154,20 @@ function on_message(self, message_id, message, sender)
 		self.score = self.score + message.score
 		label.set_text(self.score_label, self.score)
 	end
+	if message_id == hash("enemy_died") then
+		enemy_count = enemy_count - 1
+	end
 	if message_id == hash("end_level") then
 		end_level(self)
 	end
 end
 
 function update(self, dt)
+	if self.actually_finished then return end
+	if finished and enemy_count == 0 then
+		end_level(self)
+	end
+
 	self.timer = self.timer + dt
     audio_manager.update(dt)
 end

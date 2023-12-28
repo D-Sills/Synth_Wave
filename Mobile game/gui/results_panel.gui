@@ -325,7 +325,7 @@ nodes {
 }
 nodes {
   position {
-    x: 0.0
+    x: -150.0
     y: 0.0
     z: 0.0
     w: 1.0
@@ -360,7 +360,7 @@ nodes {
   id: "bar_f"
   xanchor: XANCHOR_NONE
   yanchor: YANCHOR_NONE
-  pivot: PIVOT_CENTER
+  pivot: PIVOT_W
   adjust_mode: ADJUST_MODE_STRETCH
   parent: "xp_bar"
   layer: "1"
@@ -1171,7 +1171,7 @@ nodes {
   }
   type: TYPE_BOX
   blend_mode: BLEND_MODE_ALPHA
-  texture: "ui/exitLeft"
+  texture: "ui/reload"
   id: "box2"
   xanchor: XANCHOR_NONE
   yanchor: YANCHOR_NONE

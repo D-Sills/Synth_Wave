@@ -1,0 +1,168 @@
+local audio_manager = require("scripts.modules.audio_manager")
+local utils = require("scripts.modules.utils")
+
+go.property("BPM", 124)
+go.property("enemy_1_factory", hash(""))
+go.property("enemy_2_factory", hash(""))
+go.property("enemy_3_factory", hash(""))
+
+local total_points_possible = 0
+
+local function spawn_enemy(enemy_type, position)
+	if enemy_type == "1" then
+		factory.create("#enemy_1_factory", position)
+		total_points_possible = total_points_possible + 100
+	elseif enemy_type == "2" then
+		factory.create("#enemy_2_factory", position)
+		total_points_possible = total_points_possible + 500
+	elseif enemy_type == "3" then
+		factory.create("#enemy_3_factory", position)
+		total_points_possible = total_points_possible + 300
+	end
+end
+
+local function spawn_wave(enemy_type, count)
+	for i = 1, count do
+		spawn_enemy(enemy_type, utils.random_position())
+	end
+end
+
+local timeline = { -- surely a better way to do this? idk. i guess some sort of custom editor, but this'll do for now (O-O)-b
+	{ time = 0, action = function() 
+		audio_manager.play_sound_effect("Voice/Begin Countdown") 
+		audio_manager.BPM = 124
+	end }, -- chatgpt made this :) obviously this should be handcrafted but i don't have time to curate a good experience
+	{ time = 3, action = function() audio_manager.play_music("Music/high_rise", 0.5) end },
+	{ time = 5, action = function() spawn_wave("1", 2) end },
+	{ time = 15, action = function() spawn_wave("2", 2) end },
+	{ time = 20, action = function() spawn_wave("3", 1) end },
+	{ time = 25, action = function() spawn_wave("1", 3) end },  -- More of enemy 1
+    { time = 35, action = function() spawn_wave("2", 1); spawn_wave("3", 2) end },  -- Mix of enemy 2 and 3
+    { time = 45, action = function() spawn_wave("1", 2); spawn_wave("3", 3) end },  -- Mix of enemy 1 and 3
+    { time = 55, action = function() spawn_wave("2", 2) end },  -- More of enemy 2
+    { time = 65, action = function() spawn_wave("3", 4) end },  -- Lots of enemy 3
+    { time = 75, action = function() spawn_wave("1", 3); spawn_wave("2", 2) end },  -- Mix of enemy 1 and 2
+    { time = 85, action = function() spawn_wave("1", 2); spawn_wave("3", 3) end },  -- Mix of enemy 1 and 3
+    { time = 95, action = function() spawn_wave("2", 1); spawn_wave("3", 4) end },  -- Intense wave of enemy 2 and 3
+    { time = 105, action = function() spawn_wave("1", 5) end },  -- Large wave of enemy 1
+    { time = 115, action = function() spawn_wave("2", 3) end },  -- Challenging wave of enemy 2
+    -- More events leading up to the climax...
+    { time = 125, action = function() spawn_wave("1", 3); spawn_wave("2", 2); spawn_wave("3", 4) end },  -- Mixed wave
+    -- Climax of the song
+    { time = 135, action = function() spawn_wave("3", 5) end },  -- Intense wave of enemy 3
+    { time = 145, action = function() spawn_wave("1", 4); spawn_wave("2", 2) end },  -- Heavy mix
+    { time = 155, action = function() spawn_wave("1", 3); spawn_wave("3", 4) end },  -- Mix of enemy 1 and 3
+    -- Cooling down towards the end
+    { time = 165, action = function() spawn_wave("2", 2) end },  -- Slower wave of enemy 2
+    { time = 175, action = function() spawn_wave("1", 3) end },  -- Final wave of enemy 1
+    { time = 185, action = function() 
+        -- Ending actions like slowing down music, preparing for level end, etc.
+    end },
+    { time = 195, action = function() 
+        -- Final cleanup, score tallying, and transition out of the level
+    end }
+}
+
+local function end_level(self)
+	msg.post(".", "release_input_focus")
+	audio_manager.stop_music(1)
+
+	for _, handle in ipairs(self.timeline_handles) do
+        if handle then
+            timer.cancel(handle)
+        end
+    end
+    self.timeline_handles = {}
+	self.finished = true
+
+	--msg.post("main:/game_manager#scene_fader", "fade_out", {duration = 1, callback = true})
+	-- save
+	--calculate rank
+	local rank = ""
+	local xp_gain = 0
+	if self.score > total_points_possible * 0.7 then
+		rank = "S"
+		xp_gain = 50
+	elseif self.score > total_points_possible * 0.65 then
+		rank = "A"
+		xp_gain = 40
+	elseif self.score > total_points_possible * 0.5 then
+		rank = "B"
+		xp_gain = 30
+	elseif self.score > total_points_possible * 0.3 then
+		rank = "C"
+		xp_gain = 20
+	elseif self.score > total_points_possible * 0.1 then
+		rank = "D"
+		xp_gain = 10
+	else
+		rank = "F"
+		xp_gain = 1
+	end
+
+	local song_name = "high_rise"
+
+	msg.post("main:/game_manager#game_manager", "save_data", {
+		song = song_name,
+		score = self.score,
+		timer = self.timer,
+		rank = rank
+	})
+	
+	msg.post("/gui#results_panel", "show_ui", {
+		score = self.score,
+		rank = rank,
+		time = self.timer,
+		accurary = "100%",
+		xp_gain = xp_gain,
+		current_level = song_name
+	})
+end
+
+local function initialize_timeline(self)
+	for _, event in ipairs(timeline) do
+		local handle = timer.delay(event.time, false, event.action)
+        table.insert(self.timeline_handles, handle)
+	end
+end
+
+function init(self)
+	audio_manager.BPM = self.BPM
+	msg.post("main:/game_manager#scene_fader", "fade_in", {duration = 0.5, callback = true})
+	msg.post("main:/game_manager#game_manager", "set_level", {level = msg.url()})
+	self.timeline_handles = {}
+	initialize_timeline(self)
+
+	self.score_label = "/labels#score"
+	self.score = 0
+	self.timer = 0
+
+	local s = tostring(self.score)
+	label.set_text(self.score_label, s or "")
+end
+
+function on_message(self, message_id, message, sender)
+	if message_id == hash("fade_in_done") then
+		msg.post(".", "acquire_input_focus")
+	end
+	if message_id == hash("fade_out_done") then
+		--msg.post("main:/collections#collection_manager", "load", {collection = "song_selection"})
+	end
+	if message_id == hash("update_score") then
+		self.score = self.score + message.score
+		label.set_text(self.score_label, self.score)
+	end
+	if message_id == hash("end_level") then
+		end_level(self)
+	end
+end
+
+function update(self, dt)
+	self.timer = self.timer + dt
+    audio_manager.update(dt)
+end
+
+function final(self)
+	audio_manager.unsubscribe(msg.url("."))
+end
+

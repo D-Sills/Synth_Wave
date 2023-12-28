@@ -1,12 +1,11 @@
-
-
 local function save_game_data(self)
     local data = {
         high_scores = self.high_scores,
         player_progress = self.player_progress,
-        volume = self.volume
+        volume = self.volume,
+        difficulty = self.difficulty,
     }
-    local path = sys.get_save_file("Synthwave Showdown", "game_data.json")
+    local path = sys.get_save_file("Synth_Wave", "game_data.json")
     local file = io.open(path, "w")
     if file then
         file:write(json.encode(data))
@@ -15,27 +14,29 @@ local function save_game_data(self)
 end
 
 local function load_game_data()
-    local path = sys.get_save_file("Synthwave Showdown", "game_data.json")
+    local path = sys.get_save_file("Synth_Wave", "game_data.json")
     local file = io.open(path, "r")
     if file then
         local data = json.decode(file:read("*a"))
         io.close(file)
         return data
     end
-    return { high_scores = {}, player_progress = { xp = 0, level = 1 }, volume = 1 }
+    return { high_scores = {}, player_progress = { xp = 0, level = 1 }, volume = 1, difficulty = 2 }
 end
 
 function init(self)
     self.current_level = nil
     self.high_scores = {}
     self.player_progress = { xp = 0, level = 1 }
-    self.volume = 1
+    self.volume = 1 -- merge into prefs
+    self.difficulty = 2
 
     local saved_data = load_game_data()
     if saved_data then
         self.high_scores = saved_data.high_scores or {}
         self.player_progress = saved_data.player_progress or { xp = 0, level = 1 }
         self.volume = saved_data.volume or 1
+        self.difficulty = saved_data.difficulty or 2
     end
 end
 
@@ -65,6 +66,9 @@ function on_message(self, message_id, message, sender)
     elseif message_id == hash("set_volume") then
         self.volume = message.volume
         save_game_data(self)
+    elseif message_id == hash("set_difficulty") then
+        self.difficulty = message.difficulty
+        save_game_data(self)
     elseif message_id == hash("save_data") then
         local existing_song_data = self.high_scores[message.song] or {}
 
@@ -79,7 +83,7 @@ function on_message(self, message_id, message, sender)
         end
 
         -- Check and update clear percentage
-        local new_clear_percentage = (message.timer / 180) * 100 -- use actual song length here but i'm probably not gonna do that!
+        local new_clear_percentage = (message.timer / 180) * 100 -- use actual song length here
         if not existing_song_data.clear_percentage or new_clear_percentage > existing_song_data.clear_percentage then
             existing_song_data.clear_percentage = new_clear_percentage
         end
@@ -95,6 +99,8 @@ function on_message(self, message_id, message, sender)
         msg.post(sender, "load_volume", { volume = self.volume })
     elseif message_id == hash("get_level") then
         msg.post(sender, "load_level", { level = self.current_level })
+    elseif message_id == hash("get_difficulty") then
+        msg.post(sender, "load_difficulty", { difficulty = self.difficulty })
     elseif message_id == hash("end_level") then
         msg.post(self.current_level, "end_level")
     end

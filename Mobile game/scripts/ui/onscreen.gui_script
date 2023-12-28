@@ -25,6 +25,7 @@ end
 
 function final(self)
 	onscreen.reset()
+	msg.post(".", "release_input_focus")
 end
 
 function on_message(self, message_id, message, sender)

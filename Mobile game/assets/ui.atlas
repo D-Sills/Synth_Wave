@@ -151,10 +151,6 @@ images {
   sprite_trim_mode: SPRITE_TRIM_MODE_OFF
 }
 images {
-  image: "/assets/ui/heart_epty.png"
-  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
-}
-images {
   image: "/assets/ui/heart_full.png"
   sprite_trim_mode: SPRITE_TRIM_MODE_OFF
 }
@@ -176,6 +172,18 @@ images {
 }
 images {
   image: "/assets/ui/fill.png"
+  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+}
+images {
+  image: "/assets/ui/heart_empty.png"
+  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+}
+images {
+  image: "/assets/ui/heart_shield.png"
+  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+}
+images {
+  image: "/assets/ui/reload.png"
   sprite_trim_mode: SPRITE_TRIM_MODE_OFF
 }
 margin: 0

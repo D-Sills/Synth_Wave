@@ -25,10 +25,12 @@ function init(self)
 	self.power_up_timers = {}
 	self.attack_power = 1
 	self.is_dealing_double_damage = false
-	self.is_firing_spiral_bullets = false
+	self.is_firing_spread_bullets = false
 	self.is_shooting_large_bullets = false
+	self.shields = 0
 
 	msg.post("/gui#hud", "update", { hp = self.hp, max_hp = self.max_hp })
+	msg.post("/hp#health_display", "update_health", { health = self.hp, max_health = self.max_health, shields = self.shields })
 end
 
 function update(self, dt)
@@ -42,6 +44,7 @@ function update(self, dt)
 		self.time_since_last_shot = self.time_since_last_shot - dt -- maybe beats but feels bad like that (OwO)-b
 	end
     
+    -- flash when invulnerable
     if self.should_flash then
 		local current_tint = go.get("#base", "tint")
 		local new_tint = current_tint.w == 1 and vmath.vector4(1, 0, 0, 0.5) or vmath.vector4(1, 1, 1, 1)
@@ -51,7 +54,6 @@ end
 
 local function fire_bullet(self, spawn_position, forward_vector, weapon_rotation_quat)
     local id = factory.create("#laserfactory", spawn_position, weapon_rotation_quat)
-	print (id .. " is the id")
 	
     -- adjust projectile based on power-ups
     if self.is_shooting_large_bullets then
@@ -81,9 +83,10 @@ local function fire_bullet(self, spawn_position, forward_vector, weapon_rotation
 end
 
 local function die(self) 
-	msg.post("main:/camera", "shake", { duration = 0.6, magnitude = 0.1 })
+	msg.post("main:/camera", "shake", { duration = 0.5, magnitude = 0.05 })
 	msg.post("/gui#floating_text", "show_floating_text", { position = go.get_position(), text = "You Died" })
 	msg.post("main:/game_manager#game_manager", "end_level")
+	audio_manager.play_sound_effect("Combat/Death")
 	--go.delete()
 end
 
@@ -111,7 +114,7 @@ function on_message(self, message_id, message, sender)
 				elseif power_up_type == "double_damage" then
 					self.is_dealing_double_damage = false
 				elseif power_up_type == "spiral_bullets" then
-					self.is_firing_spiral_bullets = false
+					self.is_firing_spread_bullets = false
 				end
 			end
 		end
@@ -129,22 +132,26 @@ function on_message(self, message_id, message, sender)
 			local spawn_position = weapon_position + forward_vector * offset_distance
 			
 			if self.time_since_last_shot <= 0 then
-				if self.is_firing_spiral_bullets then
+				if self.is_firing_spread_bullets then
 					local spread_angle = math.rad(6)  -- Angle for the spread; adjust as needed
-
+			
 					-- Fire bullet straight forward
 					fire_bullet(self, spawn_position, forward_vector, weapon_rotation_quat)
-				
-					-- Fire bullet to the left
-					local left_vector = vmath.rotate(weapon_rotation_quat, vmath.vector3(math.cos(-spread_angle), math.sin(-spread_angle), 0))
+			
+					-- Rotate the forward vector to the left
+					local left_rotation = vmath.quat_rotation_z(-spread_angle)
+					local left_vector = vmath.rotate(left_rotation, forward_vector)
 					fire_bullet(self, spawn_position, left_vector, weapon_rotation_quat)
-				
-					-- Fire bullet to the right
-					local right_vector = vmath.rotate(weapon_rotation_quat, vmath.vector3(math.cos(spread_angle), math.sin(spread_angle), 0))
+			
+					-- Rotate the forward vector to the right
+					local right_rotation = vmath.quat_rotation_z(spread_angle)
+					local right_vector = vmath.rotate(right_rotation, forward_vector)
 					fire_bullet(self, spawn_position, right_vector, weapon_rotation_quat)
 				else
-				fire_bullet(self, spawn_position, forward_vector, weapon_rotation_quat)
-			end
+					fire_bullet(self, spawn_position, forward_vector, weapon_rotation_quat)
+				end
+			
+			
 			
 			msg.post("/gui#floating_text", "show_floating_rating", { text = rating })
 			
@@ -166,8 +173,14 @@ function on_message(self, message_id, message, sender)
         go.set_rotation(target_rotation, "/weapon#weapon")
 	elseif message_id == hash("take_damage") then
 		if not self.is_invulnerable then
-			self.hp = self.hp - message.damage
-			msg.post("/hp#health_display", "update_health", { health = self.hp, max_health = self.max_health })
+			if  self.shields > 0 then
+				self.shields = self.shields - 1
+			else
+				self.hp = self.hp - message.damage
+			end
+
+			audio_manager.play_sound_effect("Combat/Impact")
+			msg.post("/hp#health_display", "update_health", { health = self.hp, max_health = self.max_health, shields = self.shields })
 			if self.hp <= 0 then
 				die(self)
 			else
@@ -181,7 +194,7 @@ function on_message(self, message_id, message, sender)
 	elseif message_id == hash("power_up_collected") then
 		if message.type == 1 then
 			if self.hp < self.max_health then self.hp = self.hp + 1 end
-			msg.post("/gui#hud", "update_health", { health = self.hp, max_health = self.max_health })
+			msg.post("/gui#hud", "update_health", { health = self.hp, max_health = self.max_health, shields = self.shields })
 			msg.post("/gui#floating_text", "show_floating_text", { position = go.get_position() + vmath.vector3(0,40,0), text = "+1 HP" })
         elseif message.type == 2 then
             self.is_shooting_large_bullets = true
@@ -192,11 +205,15 @@ function on_message(self, message_id, message, sender)
             self.power_up_timers["double_damage"] = 10  -- 10 beats of double damage
             msg.post("/gui#floating_text", "show_floating_text", { position = go.get_position() + vmath.vector3(0,40,0), text = "Double Damage" })
         elseif message.type == 4 then
-            self.is_firing_spiral_bullets = true
+            self.is_firing_spread_bullets = true
             self.power_up_timers["spiral_bullets"] = 10  -- 10 beats of spiral bullets
             msg.post("/gui#floating_text", "show_floating_text", { position = go.get_position() + vmath.vector3(0,40,0), text = "Spread Bullets" })
-        end
-		--audio_manager.play_sound_effect("Combat/Powerup")
+		elseif message.type == 5 then
+			self.shields = self.shields + 1
+			msg.post("/hp#health_display", "update_health", { health = self.hp, max_health = self.max_health, shields = self.shields })
+			msg.post("/gui#floating_text", "show_floating_text", { position = go.get_position() + vmath.vector3(0,40,0), text = "+1 Shield" })
+		end
+		audio_manager.play_sound_effect("Combat/Pickup")
 	
 	elseif message_id == hash("get_damage_to_take") then
 		msg.post(sender, "take_damage", { damage = self.attack_power * self.attack_power_multiplier })

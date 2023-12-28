@@ -7,10 +7,9 @@ local function load_with_loading_screen(self, collection_name)
 	if self.active_scene then
 		print("unload " .. self.active_scene)
 		print("load " .. collection_name)
-		if collection_name == self.active_scene then
-		print("same scene")
-			return
-		end
+		--if collection_name == self.active_scene then
+		--	return
+		--end
 
 		msg.post("main:/collections#" .. self.active_scene .. "_proxy", "release_input_focus")
 		msg.post("main:/collections#" .. self.active_scene .. "_proxy", "unload")
