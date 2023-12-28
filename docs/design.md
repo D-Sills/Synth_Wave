@@ -73,7 +73,6 @@ These power-ups have a chance to spawn when an enemy is defeated, and will then 
 ### Character Progression
 Each song is a level, with the enemies and events designed around the music. Upon the song's completion, the player is given a rank based on their score and time, gaining
 experience points which increase their account's level. Higher levels could unlock new songs and power-ups (not implemented), with the player's account level displayed on the main menu.
-![Song Select](song_select.png)
 
 ### Winning and Losing
 A level is won by surviving until the end of the song while defeating waves of enemies. Failure occurs if the player's health depletes entirely.
